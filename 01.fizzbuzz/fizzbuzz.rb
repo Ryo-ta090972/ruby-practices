@@ -9,6 +9,7 @@
         puts "Fizz"
     elsif buzz
         puts "Buzz"
-    else puts x
+    else
+        puts x
     end    
 end
