@@ -4,9 +4,10 @@ require 'optparse'
 DAY_OF_WEEK = ["日" ,"月" ,"火" ,"水" ,"木" ,"金" ,"土" ]
 WIDTH_HALF = 3
 WIDTH_FULL = 2
+SPACE = " "
 INDENT_HEADER = 10
-SET_COLOR_REVERSAL = "\e[7m"
-RESET_COLOR = "\e[0m"
+INVERSE_CODE = "\e[7m"
+RESET_CODE = "\e[0m"
 
 today = Date.today
 target_year = today.year
@@ -20,14 +21,15 @@ opt.parse!(ARGV)
 beginning_of_month = Date.new(target_year, target_month, 1 )
 end_of_month = Date.new(target_year, target_month, -1 )
 
-def format_print(day, today, end_of_month)
-    print SET_COLOR_REVERSAL if day == today
-    print day.day.to_s.rjust(WIDTH_HALF)
-    print RESET_COLOR if day == today
+def format_print(day, today)
+    print SPACE
+    print INVERSE_CODE if day == today
+    print day.day.to_s.rjust(WIDTH_FULL)
+    print RESET_CODE if day == today
     puts if day.saturday?
 end
 
-print (target_month.to_s + "月 ").rjust(INDENT_HEADER)
+print "#{target_month.to_s}月 ".rjust(INDENT_HEADER)
 puts target_year
 
 DAY_OF_WEEK.each do |text|
@@ -36,9 +38,9 @@ end
 puts
 
 indent_beginning_month = beginning_of_month.wday * WIDTH_HALF
-indent_beginning_month.times {print " "}
+indent_beginning_month.times {print SPACE}
 
 (beginning_of_month..end_of_month).each do |day|
-    format_print(day, today, end_of_month)
+    format_print(day, today)
 end
 puts
