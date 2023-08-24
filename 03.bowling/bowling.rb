@@ -1,33 +1,35 @@
 # frozen_string_literal: true
 
-STRIKE = 10
-SPARE = 10
-
 data = ARGV[0]
-down_pins = data.split(',')
+down_pin = data.split(',')
 scores = []
-down_pins.each do |down_pin|
-  if down_pin == 'X'
-    scores << STRIKE
+down_pin.each do |s|
+  if s == 'X'
+    scores << 10
     scores << 0
   else
-    scores << down_pin.to_i
+    scores << s.to_i
   end
 end
 
-frames = scores.each_slice(2).to_a
+frames = []
+scores.each_slice(2) do |s|
+  frames << s
+end
 
 total_score = 0
-10.times do |index|
-  total_score += frames[index].sum
+frames.each_with_index do |frame, index|
+  next unless index < 10
 
-  if frames[index][0] == STRIKE && frames[index + 1][0] == STRIKE
-    total_score += frames[index + 1][0] + frames[index + 2][0]
-  elsif frames[index][0] == STRIKE && frames[index + 1][0] != STRIKE
-    total_score += frames[index + 1].sum
-  elsif frames[index].sum == SPARE
-    total_score += frames[index + 1][0]
-  end
+  total_score += if frame[0] == 10 && frames[index + 1][0] == 10
+                   10 + frames[index + 1][0] + frames[index + 2][0]
+                 elsif frame[0] == 10 && frames[index + 1][0] != 10
+                   10 + frames[index + 1].sum
+                 elsif frame.sum == 10
+                   10 + frames[index + 1][0]
+                 else
+                   frame.sum
+                 end
 end
 
 p total_score
