@@ -19,12 +19,16 @@ frames = scores.each_slice(2).to_a
 
 total_score = 0
 10.times do |index|
-  bonus_score = if frames[index][0] == STRIKE && frames[index + 1][0] == STRIKE
-                  frames[index + 1][0] + frames[index + 2][0]
-                elsif frames[index][0] == STRIKE && frames[index + 1][0] != STRIKE
-                  frames[index + 1].sum
-                elsif frames[index].sum == SPARE
-                  frames[index + 1][0]
+  frame = frames[index]
+  next_frame = frames[index + 1]
+  next_next_frame = frames[index + 2]
+
+  bonus_score = if frame[0] == STRIKE && next_frame[0] == STRIKE
+                  next_frame[0] + next_next_frame[0]
+                elsif frame[0] == STRIKE && next_frame[0] != STRIKE
+                  next_frame.sum
+                elsif frame.sum == SPARE
+                  next_frame[0]
                 else
                   0
                 end
