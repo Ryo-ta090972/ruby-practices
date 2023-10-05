@@ -3,55 +3,63 @@
 COLUMN = 3
 SPACE = 2
 
-def not_option(names)
+def filter_names(names)
   names.reject { |name| name.start_with?('.') }.sort
 end
 
-def generate(targets, column)
-  row = (targets.size.to_f / column).ceil
-  when_2rows_blank = column - (targets.size - column)
-  blank_str = when_2rows_blank.positive? ? targets.pop(when_2rows_blank).map { |t| [t] } : []
+def reposition(names)
+  row = (names.size.to_f / COLUMN).ceil
+  total_blank = names.size % COLUMN
 
-  targets.each_slice(row).to_a.push(*blank_str).map! do |t|
-    t.values_at(0...row)
+  sliced_names_front = names.slice(0...-total_blank)
+  sliced_names_back = names.slice(-total_blank..-1)
+
+  sliced_names_by_row = if row == 2
+                          sliced_names_front.each_slice(row).to_a.push(sliced_names_back)
+                        else
+                          names.each_slice(row)
+                        end
+
+  sliced_names_by_row.map do |names_by_row|
+    names_by_row.values_at(0...row)
   end.transpose
 end
 
-def str_max_size_of_each_col(target)
-  str_size = []
+def find_max_str_size(names)
+  str_sizes = []
 
-  target.each do |element|
-    element.each_with_index do |value, col|
-      str_size[col] ||= []
-      str_size[col] << value.size unless value.nil?
+  names.each do |strings|
+    strings.each_with_index do |str, col|
+      str_sizes[col] ||= []
+      str_sizes[col] << str.size unless str.nil?
     end
   end
 
-  str_size.map(&:max)
+  str_sizes.map(&:max)
 end
 
-def str_for_output(targets, column, space)
-  target = generate(targets, column)
-  max_size = str_max_size_of_each_col(target)
+def output(names)
+  repositioned_names = reposition(names)
+  max_str_sizes = find_max_str_size(repositioned_names)
 
-  result_lines = []
+  names_for_output = []
 
-  target.each do |element|
-    line = element.each_with_index.map do |value, col|
-      value.ljust(max_size[col] + space) unless value.nil?
+  repositioned_names.each do |strings|
+    joined_str = strings.each_with_index.map do |str, col|
+      str.ljust(max_str_sizes[col] + SPACE) unless str.nil?
     end.join.rstrip
-    result_lines << line
+    names_for_output << joined_str
   end
 
-  result_lines.join("\n")
+  names_for_output.join("\n")
 end
 
 if $PROGRAM_NAME == __FILE__
 
   path = ARGV[0]
   subject_dir = path || '.'
-  flie_and_dir_names = Dir.children(subject_dir)
-  targets = not_option(flie_and_dir_names)
-  puts str_for_output(targets, COLUMN, SPACE)
+  file_and_dir_names = Dir.children(subject_dir)
+  filtered_names = filter_names(file_and_dir_names)
+  puts output(filtered_names)
 
 end
