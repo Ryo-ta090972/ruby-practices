@@ -16,7 +16,6 @@ end
 
 def find_max_str_sizes(nested_names)
   str_sizes = []
-  
   nested_names.each do |names|
     names.each_with_index do |name, col|
       str_sizes[col] ||= []
