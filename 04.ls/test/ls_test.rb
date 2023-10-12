@@ -22,7 +22,7 @@ class LsTest < Minitest::Test
 
   def test_reposition_val4_row2_col3
     result = reposition((1..4).to_a)
-    expected = [[1, 3, 4], [2, nil, nil]]
+    expected = [[1, 3], [2, 4]]
     assert_equal expected, result
   end
 
@@ -32,14 +32,14 @@ class LsTest < Minitest::Test
     assert_equal expected, result
   end
 
-  def test_find_max_str_size_val1
-    result = find_max_str_size([['1']])
+  def test_find_max_str_sizes_val1
+    result = find_max_str_sizes([['1']])
     expected = [1]
     assert_equal expected, result
   end
 
-  def test_find_max_str_size_val5_col3
-    result = find_max_str_size([%w[a bb e], ['ccc', 'dddd', nil]])
+  def test_find_max_str_sizes_val5_col3
+    result = find_max_str_sizes([%w[a bb e], ['ccc', 'dddd', nil]])
     expected = [3, 4, 1]
     assert_equal expected, result
   end
@@ -48,8 +48,8 @@ class LsTest < Minitest::Test
     names = %w[test1 test2 test3 test4]
     result = output(names)
     expected = <<~TEXT.chomp
-      test1  test3  test4
-      test2
+      test1  test3
+      test2  test4
     TEXT
     assert_equal expected, result
   end

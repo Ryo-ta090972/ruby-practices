@@ -9,57 +9,39 @@ end
 
 def reposition(names)
   row = (names.size.to_f / COLUMN).ceil
-  total_blank = names.size % COLUMN
-
-  sliced_names_front = names.slice(0...-total_blank)
-  sliced_names_back = names.slice(-total_blank..-1)
-
-  sliced_names_by_row = if row == 2
-                          sliced_names_front.each_slice(row).to_a.push(sliced_names_back)
-                        else
-                          names.each_slice(row)
-                        end
-
-  sliced_names_by_row.map do |names_by_row|
+  names.each_slice(row).map do |names_by_row|
     names_by_row.values_at(0...row)
   end.transpose
 end
 
-def find_max_str_size(names)
+def find_max_str_sizes(nested_names)
   str_sizes = []
-
-  names.each do |strings|
-    strings.each_with_index do |str, col|
+  
+  nested_names.each do |names|
+    names.each_with_index do |name, col|
       str_sizes[col] ||= []
-      str_sizes[col] << str.size unless str.nil?
+      str_sizes[col] << name.to_s.size
     end
   end
 
   str_sizes.map(&:max)
 end
 
-def output(names)
-  repositioned_names = reposition(names)
-  max_str_sizes = find_max_str_size(repositioned_names)
+def output(nested_names)
+  repositioned_names = reposition(nested_names)
+  max_str_sizes = find_max_str_sizes(repositioned_names)
 
-  names_for_output = []
-
-  repositioned_names.each do |strings|
-    joined_str = strings.each_with_index.map do |str, col|
-      str.ljust(max_str_sizes[col] + SPACE) unless str.nil?
+  repositioned_names.each.map do |names|
+    names.each_with_index.map do |name, col|
+      name.to_s.ljust(max_str_sizes[col] + SPACE)
     end.join.rstrip
-    names_for_output << joined_str
-  end
-
-  names_for_output.join("\n")
+  end.join("\n")
 end
 
 if $PROGRAM_NAME == __FILE__
-
   path = ARGV[0]
   subject_dir = path || '.'
-  file_and_dir_names = Dir.children(subject_dir)
-  filtered_names = filter_names(file_and_dir_names)
+  entry_names = Dir.children(subject_dir)
+  filtered_names = filter_names(entry_names)
   puts output(filtered_names)
-
 end
