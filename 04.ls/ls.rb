@@ -3,8 +3,27 @@
 COLUMN = 3
 SPACE = 2
 
+def main
+  path = ARGV[0]
+  subject_dir = path || '.'
+  entry_names = Dir.children(subject_dir).sort
+  filtered_names = filter_names(entry_names)
+  puts output(filtered_names)
+end
+
 def filter_names(names)
-  names.reject { |name| name.start_with?('.') }.sort
+  names.reject { |name| name.start_with?('.') }
+end
+
+def output(nested_names)
+  repositioned_names = reposition(nested_names)
+  max_str_sizes = find_max_str_sizes(repositioned_names)
+
+  repositioned_names.each.map do |names|
+    names.each_with_index.map do |name, col|
+      name.to_s.ljust(max_str_sizes[col] + SPACE)
+    end.join.rstrip
+  end.join("\n")
 end
 
 def reposition(names)
@@ -26,21 +45,4 @@ def find_max_str_sizes(nested_names)
   str_sizes.map(&:max)
 end
 
-def output(nested_names)
-  repositioned_names = reposition(nested_names)
-  max_str_sizes = find_max_str_sizes(repositioned_names)
-
-  repositioned_names.each.map do |names|
-    names.each_with_index.map do |name, col|
-      name.to_s.ljust(max_str_sizes[col] + SPACE)
-    end.join.rstrip
-  end.join("\n")
-end
-
-if $PROGRAM_NAME == __FILE__
-  path = ARGV[0]
-  subject_dir = path || '.'
-  entry_names = Dir.children(subject_dir)
-  filtered_names = filter_names(entry_names)
-  puts output(filtered_names)
-end
+main if $PROGRAM_NAME == __FILE__
