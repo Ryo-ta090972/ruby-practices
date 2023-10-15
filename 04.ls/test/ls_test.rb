@@ -4,8 +4,18 @@ require 'minitest/autorun'
 require_relative '../ls'
 
 class LsTest < Minitest::Test
-  def test_filter_names
-    assert_equal %w[test1 test2], filter_names(%w[test1 test2 .test3 .test4])
+  def test_filter_names_not_option
+    options = {}
+    result = filter_names(%w[test1 test2 .test3 .test4], options)
+    expected = %w[test1 test2]
+    assert_equal expected, result
+  end
+
+  def test_filter_names_option_a
+    options = { a: true }
+    result = filter_names(%w[. .. test1 test2 .test3], options)
+    expected = %w[. .. test1 test2 .test3]
+    assert_equal expected, result
   end
 
   def test_reposition_val1_row1

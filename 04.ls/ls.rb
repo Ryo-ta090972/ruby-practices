@@ -1,18 +1,31 @@
 # frozen_string_literal: true
 
+require 'optparse'
+
 COLUMN = 3
 SPACE = 2
 
 def main
-  path = ARGV[0]
-  subject_dir = path || '.'
-  entry_names = Dir.children(subject_dir).sort
-  filtered_names = filter_names(entry_names)
+  parsed_options = parse_options
+  target_dir = ARGV.empty? ? '.' : ARGV[0]
+  entry_names = Dir.entries(target_dir).sort
+  filtered_names = filter_names(entry_names, parsed_options)
   puts output(filtered_names)
 end
 
-def filter_names(names)
-  names.reject { |name| name.start_with?('.') }
+def parse_options
+  options = {}
+  OptionParser.new do |opts|
+    opts.on('-a') { options[:a] = true }
+  end.parse!(ARGV)
+  options
+end
+
+def filter_names(names, options)
+  filtered_names = names
+  filtered_names = names.reject { |name| name.start_with?('.') } unless options[:a]
+
+  filtered_names
 end
 
 def output(nested_names)
