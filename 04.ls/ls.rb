@@ -1,26 +1,36 @@
 # frozen_string_literal: true
 
+require 'optparse'
+
 COLUMN = 3
 SPACE = 2
 
 def main
-  path = ARGV[0]
-  subject_dir = path || '.'
-  entry_names = Dir.children(subject_dir).sort
-  filtered_names = filter_names(entry_names)
+  parsed_options = parse_options
+  target_dir = ARGV.empty? ? '.' : ARGV[0]
+  entry_names = Dir.entries(target_dir).sort
+  filtered_names = filter_names(entry_names, parsed_options)
   puts output(filtered_names)
 end
 
-def filter_names(names)
-  names.reject { |name| name.start_with?('.') }
+def parse_options
+  options = {}
+  OptionParser.new do |opts|
+    opts.on('-a') { options[:a] = true }
+  end.parse!(ARGV)
+  options
 end
 
-def output(nested_names)
-  repositioned_names = reposition(nested_names)
+def filter_names(names, options)
+  options[:a] ? names : names.reject { |name| name.start_with?('.') }
+end
+
+def output(names)
+  repositioned_names = reposition(names)
   max_str_sizes = find_max_str_sizes(repositioned_names)
 
-  repositioned_names.each.map do |names|
-    names.each_with_index.map do |name, col|
+  repositioned_names.each.map do |names_for_row|
+    names_for_row.each_with_index.map do |name, col|
       name.to_s.ljust(max_str_sizes[col] + SPACE)
     end.join.rstrip
   end.join("\n")
@@ -28,8 +38,8 @@ end
 
 def reposition(names)
   row = (names.size.to_f / COLUMN).ceil
-  names.each_slice(row).map do |names_by_row|
-    names_by_row.values_at(0...row)
+  names.each_slice(row).map do |names_for_row|
+    names_for_row.values_at(0...row)
   end.transpose
 end
 
