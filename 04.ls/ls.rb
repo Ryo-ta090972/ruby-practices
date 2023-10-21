@@ -8,8 +8,9 @@ SPACE = 2
 def main
   parsed_options = parse_options
   target_dir = ARGV.empty? ? '.' : ARGV[0]
-  entry_names = Dir.entries(target_dir).sort
-  filtered_names = filter_names(entry_names, parsed_options)
+  entry_names = Dir.entries(target_dir)
+  sorted_names = sort_names(entry_names, parsed_options)
+  filtered_names = filter_names(sorted_names, parsed_options)
   puts output(filtered_names)
 end
 
@@ -17,8 +18,13 @@ def parse_options
   options = {}
   OptionParser.new do |opts|
     opts.on('-a') { options[:a] = true }
+    opts.on('-r') { options[:r] = true }
   end.parse!(ARGV)
   options
+end
+
+def sort_names(names, options)
+  options[:r] ? names.sort.reverse : names.sort
 end
 
 def filter_names(names, options)
