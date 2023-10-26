@@ -33,29 +33,25 @@ class LsTest < Minitest::Test
   end
 
   def test_reposition_val1_row1
-    option = { l: false }
-    result = try_reposition([1], option)
+    result = reposition([1])
     expected = [[1]]
     assert_equal expected, result
   end
 
   def test_reposition_val3_row1_col3
-    option = { l: false }
-    result = try_reposition((1..3).to_a, option)
+    result = reposition((1..3).to_a)
     expected = [[1, 2, 3]]
     assert_equal expected, result
   end
 
   def test_reposition_val4_row2_col3
-    option = { l: false }
-    result = try_reposition((1..4).to_a, option)
+    result = reposition((1..4).to_a)
     expected = [[1, 3], [2, 4]]
     assert_equal expected, result
   end
 
   def test_reposition_val10_row4_col3
-    option = { l: false }
-    result = try_reposition((1..10).to_a, option)
+    result = reposition((1..10).to_a)
     expected = [[1, 5, 9], [2, 6, 10], [3, 7, nil], [4, 8, nil]]
     assert_equal expected, result
   end
@@ -72,10 +68,10 @@ class LsTest < Minitest::Test
     assert_equal expected, result
   end
 
-  def test_format_texts_layout_val4
+  def test_format_names_val4
     option = { l: false }
     names = %w[test1 test2 test3 test4]
-    result = format_texts_layout(names, option)
+    result = format_names(names, option)
     expected = <<~TEXT.chomp
       test1  test3
       test2  test4
@@ -83,10 +79,10 @@ class LsTest < Minitest::Test
     assert_equal expected, result
   end
 
-  def test_format_texts_layout_val7
+  def test_format_names_val7
     option = { l: false }
     names = %w[test1 test2 test3test3 test4 test5 test6 test7]
-    result = format_texts_layout(names, option)
+    result = format_names(names, option)
     expected = <<~TEXT.chomp
       test1       test4  test7
       test2       test5
@@ -101,9 +97,9 @@ class LsTest < Minitest::Test
     names = Dir.entries(target_dir_path)
     sorted_names = sort_names(names, options)
     filtered_names = filter_names(sorted_names, options)
-    texts = try_load_attributes(filtered_names, options, target_dir_path)
+    formated_names = options[:l] ? format_names(load_names_attribute(filtered_names, target_dir_path), options) : format_names(filtered_names, options)
 
-    result = format_texts_layout(texts, options)
+    result = formated_names
     expected = `ls -l`.chomp.gsub('\n', ' ')
     assert_equal expected, result
   end
