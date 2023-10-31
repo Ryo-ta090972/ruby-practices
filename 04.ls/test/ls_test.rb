@@ -69,9 +69,8 @@ class LsTest < Minitest::Test
   end
 
   def test_format_names_val4
-    option = { l: false }
     names = %w[test1 test2 test3 test4]
-    result = format_names(names, option)
+    result = format_names(names)
     expected = <<~TEXT.chomp
       test1  test3
       test2  test4
@@ -80,9 +79,8 @@ class LsTest < Minitest::Test
   end
 
   def test_format_names_val7
-    option = { l: false }
     names = %w[test1 test2 test3test3 test4 test5 test6 test7]
-    result = format_names(names, option)
+    result = format_names(names)
     expected = <<~TEXT.chomp
       test1       test4  test7
       test2       test5
@@ -97,9 +95,9 @@ class LsTest < Minitest::Test
     names = Dir.entries(target_dir_path)
     sorted_names = sort_names(names, options)
     filtered_names = filter_names(sorted_names, options)
-    formated_names = options[:l] ? format_names(load_names_attribute(filtered_names, target_dir_path), options) : format_names(filtered_names, options)
+    loaded_attributes = load_attributes(filtered_names, target_dir_path)
 
-    result = formated_names
+    result = format_attributes(loaded_attributes)
     expected = `ls -l`.chomp.gsub('\n', ' ')
     assert_equal expected, result
   end
