@@ -50,9 +50,9 @@ def main
   target_dir_path = ARGV.empty? ? '.' : ARGV[0]
   names = Dir.entries(target_dir_path)
   sorted_names = sort_names(names, options)
-  filtered_names = filter_names(sorted_names, options)
-  loaded_attributes = load_attributes(filtered_names, target_dir_path) if options[:l]
-  options[:l] ? puts(format_attributes(loaded_attributes)) : puts(format_names(filtered_names))
+  loaded_names = load_names(sorted_names, target_dir_path, options)
+  formatted_names = options[:l] ? format_attributes(loaded_names) : format_names(loaded_names)
+  puts formatted_names
 end
 
 def parse_options
@@ -70,14 +70,15 @@ def sort_names(names, options)
   options[:r] ? sorted_names.reverse : sorted_names
 end
 
-def filter_names(names, options)
-  options[:a] ? names : names.reject { |name| name.start_with?('.') }
+def load_names(names, path, options)
+  loaded_names = options[:a] ? names : names.reject { |name| name.start_with?('.') }
+  options[:l] ? load_attributes(loaded_names, path) : loaded_names
 end
 
 def load_attributes(names, path)
   total_block_size = 0
 
-  names.each.map do |name|
+  loaded_attributes = names.each.map do |name|
     name_path = File.absolute_path(name, path)
     file_stat = File::Stat.new(name_path)
     total_block_size += (file_stat.size.to_f / file_stat.blksize).ceil * BLOCK_SIZE
@@ -86,11 +87,14 @@ def load_attributes(names, path)
     attributes << load_type_and_permission(file_stat)
     attributes << file_stat.nlink
     attributes << Etc.getpwuid(file_stat.uid).name
-    attributes << Etc.getpwuid(file_stat.gid).name
+    attributes << Etc.getgrgid(file_stat.gid).name
     attributes << file_stat.size
     attributes << file_stat.mtime.strftime('%b %e %H:%M')
     attributes << name
-  end.prepend(["total #{total_block_size}"])
+  end
+
+  total = ["total #{total_block_size}"]
+  [total, *loaded_attributes]
 end
 
 def load_type_and_permission(file)
@@ -100,7 +104,8 @@ def load_type_and_permission(file)
   permission_number = file_number[3, 3]
 
   permission = to_permission(permission_number)
-  IS_AUTHORITY[authority_number] ? FILE_TYPE[type_number] + to_authority(permission, authority_number) : FILE_TYPE[type_number] + permission
+  authority_permission = IS_AUTHORITY[authority_number] ? to_authority(permission, authority_number) : permission
+  FILE_TYPE[type_number] + authority_permission
 end
 
 def to_permission(numbers)
@@ -117,7 +122,7 @@ def to_authority(permission, number)
 end
 
 def format_attributes(attributes)
-  max_str_sizes = find_max_str_sizes(attributes)
+  max_str_sizes = find_max_str_sizes(attributes[1..])
 
   attributes.each.map do |attributes_for_row|
     attributes_for_row.each_with_index.map do |attribute, col|

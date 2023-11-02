@@ -3,31 +3,33 @@
 require 'minitest/autorun'
 require_relative '../ls'
 
+TARGET_DIR_PATH = '.'
+
 class LsTest < Minitest::Test
-  def test_filter_names_not_option_a
-    option = { a: false }
-    result = filter_names(%w[test1 test2 .test3 .test4], option)
+  def test_load_names_not_option_a
+    options = { a: false, l: false }
+    result = load_names(%w[test1 test2 .test3 .test4], TARGET_DIR_PATH, options)
     expected = %w[test1 test2]
     assert_equal expected, result
   end
 
-  def test_filter_names_option_a
-    option = { a: true }
-    result = filter_names(%w[. .. test1 test2 .test3], option)
+  def test_load_names_option_a
+    options = { a: true, l: false }
+    result = load_names(%w[. .. test1 test2 .test3], TARGET_DIR_PATH, options)
     expected = %w[. .. test1 test2 .test3]
     assert_equal expected, result
   end
 
   def test_sort_names_not_option_r
-    option = { r: false }
-    result = sort_names(%w[B a C d], option)
+    options = { r: false }
+    result = sort_names(%w[B a C d], options)
     expected = %w[a B C d]
     assert_equal expected, result
   end
 
   def test_sort_names_option_r
-    option = { r: true }
-    result = sort_names(%w[A b D c], option)
+    options = { r: true }
+    result = sort_names(%w[A b D c], options)
     expected = %w[D c b A]
     assert_equal expected, result
   end
@@ -91,13 +93,11 @@ class LsTest < Minitest::Test
 
   def test_format_texts_layout_option_l
     options = { a: false, r: false, l: true }
-    target_dir_path = '.'
-    names = Dir.entries(target_dir_path)
+    names = Dir.entries(TARGET_DIR_PATH)
     sorted_names = sort_names(names, options)
-    filtered_names = filter_names(sorted_names, options)
-    loaded_attributes = load_attributes(filtered_names, target_dir_path)
+    loaded_names = load_names(sorted_names, TARGET_DIR_PATH, options)
 
-    result = format_attributes(loaded_attributes)
+    result = format_attributes(loaded_names)
     expected = `ls -l`.chomp.gsub('\n', ' ')
     assert_equal expected, result
   end
