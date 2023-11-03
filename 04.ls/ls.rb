@@ -118,7 +118,7 @@ def format_attributes(names, path)
       end
     end.join.rstrip
   end
-  
+
   [total_block_size, formatted_attributes].join("\n")
 end
 
