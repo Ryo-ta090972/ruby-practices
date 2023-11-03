@@ -6,16 +6,16 @@ require_relative '../ls'
 TARGET_DIR_PATH = '.'
 
 class LsTest < Minitest::Test
-  def test_load_names_not_option_a
+  def test_filter_names_not_option_a
     options = { a: false, l: false }
-    result = load_names(%w[test1 test2 .test3 .test4], TARGET_DIR_PATH, options)
+    result = filter_names(%w[test1 test2 .test3 .test4], options)
     expected = %w[test1 test2]
     assert_equal expected, result
   end
 
-  def test_load_names_option_a
+  def test_filter_names_option_a
     options = { a: true, l: false }
-    result = load_names(%w[. .. test1 test2 .test3], TARGET_DIR_PATH, options)
+    result = filter_names(%w[. .. test1 test2 .test3], options)
     expected = %w[. .. test1 test2 .test3]
     assert_equal expected, result
   end
@@ -95,9 +95,9 @@ class LsTest < Minitest::Test
     options = { a: false, r: false, l: true }
     names = Dir.entries(TARGET_DIR_PATH)
     sorted_names = sort_names(names, options)
-    loaded_names = load_names(sorted_names, TARGET_DIR_PATH, options)
+    filtered_names = filter_names(sorted_names, options)
 
-    result = format_attributes(loaded_names)
+    result = format_attributes(filtered_names, TARGET_DIR_PATH)
     expected = `ls -l`.chomp.gsub('\n', ' ')
     assert_equal expected, result
   end
