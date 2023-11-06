@@ -85,9 +85,9 @@ def reposition(names)
   end.transpose
 end
 
-def find_max_str_sizes(nested_texts)
+def find_max_str_sizes(nested_names)
   str_sizes = []
-  nested_texts.each do |names|
+  nested_names.each do |names|
     names.each_with_index do |name, col|
       str_sizes[col] ||= []
       str_sizes[col] << name.to_s.size
