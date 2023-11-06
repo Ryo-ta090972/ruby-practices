@@ -26,14 +26,7 @@ PERMISSION = {
   '7' => 'rwx'
 }.freeze
 
-IS_AUTHORITY = {
-  '0' => false,
-  '1' => true,
-  '2' => true,
-  '4' => true
-}.freeze
-
-INDEX_AUTHORITY = {
+AUTHORITY_INDEX = {
   '1' => 8,
   '2' => 5,
   '4' => 2
@@ -51,8 +44,8 @@ def main
   names = Dir.entries(target_dir_path)
   sorted_names = sort_names(names, options)
   filtered_names = filter_names(sorted_names, options)
-  formatted_names = options[:l] ? format_attributes(filtered_names, target_dir_path) : format_names(filtered_names)
-  puts formatted_names
+  formatted_names_or_attributes = options[:l] ? format_attributes(filtered_names, target_dir_path) : format_names(filtered_names)
+  puts formatted_names_or_attributes
 end
 
 def parse_options
@@ -107,7 +100,7 @@ end
 def format_attributes(names, path)
   nested_attributes = load_attributes(names, path)
   max_str_sizes = find_max_str_sizes(nested_attributes)
-  total_block_size = count_total_block_size(names, path)
+  total_block_size = "total #{count_total_block_size(names, path)}"
 
   formatted_attributes = nested_attributes.map do |attributes|
     attributes.each_with_index.map do |attribute, col|
@@ -139,40 +132,34 @@ def load_attributes(names, path)
   end
 end
 
-def load_type_and_permission(file)
-  file_number = file.mode.to_s(8).rjust(6, '0')
+def load_type_and_permission(file_stat)
+  file_number = file_stat.mode.to_s(8).rjust(6, '0')
   type_number = file_number[0, 2]
   authority_number = file_number[2, 1]
   permission_number = file_number[3, 3]
 
   permission = to_permission(permission_number)
-  authority_permission = IS_AUTHORITY[authority_number] ? to_authority(permission, authority_number) : permission
-  FILE_TYPE[type_number] + authority_permission
+  authority_or_permission = AUTHORITY_INDEX.key?(authority_number) ? to_authority(permission, authority_number) : permission
+  FILE_TYPE[type_number] + authority_or_permission
 end
 
-def to_permission(numbers)
-  numbers.each_char.map do |number|
-    PERMISSION[number]
-  end.join
+def to_permission(number)
+  number.gsub(/./, PERMISSION)
 end
 
 def to_authority(permission, number)
   authority_permission = permission.dup
-  index = INDEX_AUTHORITY[number]
+  index = AUTHORITY_INDEX[number]
   authority_permission[index] = AUTHORITY_TYPE[number][authority_permission[index]]
   authority_permission
 end
 
 def count_total_block_size(names, path)
-  total_block_size = 0
-
-  names.each do |name|
+  names.sum do |name|
     name_path = File.absolute_path(name, path)
     file_stat = File::Stat.new(name_path)
-    total_block_size += (file_stat.size.to_f / file_stat.blksize).ceil * BLOCK_SIZE
+    (file_stat.size.to_f / file_stat.blksize).ceil * BLOCK_SIZE
   end
-
-  "total #{total_block_size}"
 end
 
 main if $PROGRAM_NAME == __FILE__
