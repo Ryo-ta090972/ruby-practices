@@ -44,8 +44,8 @@ def main
   names = Dir.entries(target_dir_path)
   sorted_names = sort_names(names, options)
   filtered_names = filter_names(sorted_names, options)
-  formatted_names_or_attributes = options[:l] ? format_attributes(filtered_names, target_dir_path) : format_names(filtered_names)
-  puts formatted_names_or_attributes
+  output_text = options[:l] ? format_attributes(filtered_names, target_dir_path) : format_names(filtered_names)
+  puts output_text
 end
 
 def parse_options
@@ -69,7 +69,7 @@ end
 
 def format_names(names)
   repositioned_names = reposition(names)
-  max_str_sizes = find_max_str_sizes(repositioned_names)
+  max_str_sizes = calculate_max_str_sizes(repositioned_names)
 
   repositioned_names.map do |names_for_row|
     names_for_row.each_with_index.map do |name, col|
@@ -85,7 +85,7 @@ def reposition(names)
   end.transpose
 end
 
-def find_max_str_sizes(nested_names)
+def calculate_max_str_sizes(nested_names)
   str_sizes = []
   nested_names.each do |names|
     names.each_with_index do |name, col|
@@ -99,7 +99,7 @@ end
 
 def format_attributes(names, path)
   nested_attributes = load_attributes(names, path)
-  max_str_sizes = find_max_str_sizes(nested_attributes)
+  max_str_sizes = calculate_max_str_sizes(nested_attributes)
   total_block_size = "total #{count_total_block_size(names, path)}"
 
   formatted_attributes = nested_attributes.map do |attributes|
@@ -121,7 +121,7 @@ def load_attributes(names, path)
     file_stat = File::Stat.new(name_path)
 
     [
-      load_type_and_permission(file_stat),
+      build_type_and_permission(file_stat),
       file_stat.nlink,
       Etc.getpwuid(file_stat.uid).name,
       Etc.getgrgid(file_stat.gid).name,
@@ -132,19 +132,15 @@ def load_attributes(names, path)
   end
 end
 
-def load_type_and_permission(file_stat)
+def build_type_and_permission(file_stat)
   file_number = file_stat.mode.to_s(8).rjust(6, '0')
   type_number = file_number[0, 2]
   authority_number = file_number[2, 1]
   permission_number = file_number[3, 3]
 
-  permission = to_permission(permission_number)
+  permission = permission_number.gsub(/./, PERMISSION)
   authority_or_permission = AUTHORITY_INDEX.key?(authority_number) ? to_authority(permission, authority_number) : permission
   FILE_TYPE[type_number] + authority_or_permission
-end
-
-def to_permission(number)
-  number.gsub(/./, PERMISSION)
 end
 
 def to_authority(permission, number)

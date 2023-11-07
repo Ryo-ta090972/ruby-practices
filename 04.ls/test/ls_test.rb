@@ -58,14 +58,14 @@ class LsTest < Minitest::Test
     assert_equal expected, result
   end
 
-  def test_find_max_str_sizes_val1
-    result = find_max_str_sizes([['1']])
+  def test_calculate_max_str_sizes_val1
+    result = calculate_max_str_sizes([['1']])
     expected = [1]
     assert_equal expected, result
   end
 
-  def test_find_max_str_sizes_val5_col3
-    result = find_max_str_sizes([%w[a bb e], ['ccc', 'dddd', nil]])
+  def test_calculate_max_str_sizes_val5_col3
+    result = calculate_max_str_sizes([%w[a bb e], ['ccc', 'dddd', nil]])
     expected = [3, 4, 1]
     assert_equal expected, result
   end
