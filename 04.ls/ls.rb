@@ -59,7 +59,7 @@ def parse_options
 end
 
 def sort_names(names, options)
-  sorted_names = names.sort_by(&:upcase)
+  sorted_names = names.sort_by { |name| name.gsub(/^\./, '').upcase}
   options[:r] ? sorted_names.reverse : sorted_names
 end
 
