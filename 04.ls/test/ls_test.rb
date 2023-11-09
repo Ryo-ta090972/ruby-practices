@@ -3,18 +3,34 @@
 require 'minitest/autorun'
 require_relative '../ls'
 
+TARGET_DIR_PATH = '.'
+
 class LsTest < Minitest::Test
-  def test_filter_names_not_option
-    options = {}
+  def test_filter_names_not_option_a
+    options = { a: false, l: false }
     result = filter_names(%w[test1 test2 .test3 .test4], options)
     expected = %w[test1 test2]
     assert_equal expected, result
   end
 
   def test_filter_names_option_a
-    options = { a: true }
+    options = { a: true, l: false }
     result = filter_names(%w[. .. test1 test2 .test3], options)
     expected = %w[. .. test1 test2 .test3]
+    assert_equal expected, result
+  end
+
+  def test_sort_names_not_option_r
+    options = { r: false }
+    result = sort_names(%w[B a C d], options)
+    expected = %w[a B C d]
+    assert_equal expected, result
+  end
+
+  def test_sort_names_option_r
+    options = { r: true }
+    result = sort_names(%w[A b D c], options)
+    expected = %w[D c b A]
     assert_equal expected, result
   end
 
@@ -42,21 +58,21 @@ class LsTest < Minitest::Test
     assert_equal expected, result
   end
 
-  def test_find_max_str_sizes_val1
-    result = find_max_str_sizes([['1']])
+  def test_calculate_max_str_sizes_val1
+    result = calculate_max_str_sizes([['1']])
     expected = [1]
     assert_equal expected, result
   end
 
-  def test_find_max_str_sizes_val5_col3
-    result = find_max_str_sizes([%w[a bb e], ['ccc', 'dddd', nil]])
+  def test_calculate_max_str_sizes_val5_col3
+    result = calculate_max_str_sizes([%w[a bb e], ['ccc', 'dddd', nil]])
     expected = [3, 4, 1]
     assert_equal expected, result
   end
 
-  def test_output_val4
+  def test_format_names_val4
     names = %w[test1 test2 test3 test4]
-    result = output(names)
+    result = format_names(names)
     expected = <<~TEXT.chomp
       test1  test3
       test2  test4
@@ -64,14 +80,25 @@ class LsTest < Minitest::Test
     assert_equal expected, result
   end
 
-  def test_output_val7
+  def test_format_names_val7
     names = %w[test1 test2 test3test3 test4 test5 test6 test7]
-    result = output(names)
+    result = format_names(names)
     expected = <<~TEXT.chomp
       test1       test4  test7
       test2       test5
       test3test3  test6
     TEXT
+    assert_equal expected, result
+  end
+
+  def test_format_texts_layout_option_l
+    options = { a: false, r: false, l: true }
+    names = Dir.entries(TARGET_DIR_PATH)
+    sorted_names = sort_names(names, options)
+    filtered_names = filter_names(sorted_names, options)
+
+    result = format_attributes(filtered_names, TARGET_DIR_PATH)
+    expected = `ls -l`.chomp.gsub('\n', ' ')
     assert_equal expected, result
   end
 end
