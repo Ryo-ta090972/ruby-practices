@@ -1,87 +1,108 @@
+# frozen_string_literal: true
 
 require 'optparse'
-require 'debug'
+
+WIDTH_FOR_RJUST_0 = 0
+WIDTH_FOR_RJUST_7 = 7
 
 def main
   options = parse_options
-  loaded_files = load_files_of_row_word_byte_names(options)
-  formatted_files = format_files(loaded_files)
-  puts formatted_files
+  is_stdin = ARGV.empty?
+  loaded_attributes = is_stdin ? load_attributes_of_stdin : load_attributes_of_files
+  output_text = is_stdin ? to_output_text_from_stdin_attributes(loaded_attributes, options) : to_output_text_from_files_attributes(loaded_attributes, options)
+  puts output_text
 end
 
 def parse_options
-  options = {}
+  options = { row: true, word: true, byte: true }
+
   OptionParser.new do |opts|
-    opts.on('-l') { options[:l] = true }
-    opts.on('-w') { options[:w] = true }
-    opts.on('-c') { options[:c] = true }
+    opts.on('-l') { options[:row] = false }
+    opts.on('-w') { options[:word] = false }
+    opts.on('-c') { options[:byte] = false }
   end.parse!(ARGV)
   options
 end
 
-def load_files_of_row_word_byte_names(options)
-  counted_rows = []
-  counted_words = []
-  counted_bytes = []
+def load_attributes_of_stdin
+  stdin = $stdin.read
 
-  loaded_files = ARGV.map do |file_path|
-    counted_row = count_row(file_path, options)
-    counted_word = count_word(file_path, options)
-    counted_byte = count_byte(file_path, options)
-
-    counted_rows << counted_row
-    counted_words << counted_word
-    counted_bytes << counted_byte
-
-    [
-    counted_row,
-    counted_word,
-    counted_byte,
-    File.new(file_path).path
-    ]
-  end.compact
-
-  total_row = counted_rows.include?(nil) ? counted_rows.compact : counted_rows.sum
-  total_word = counted_words.include?(nil) ? counted_words.compact : counted_words.sum
-  total_byte = counted_bytes.include?(nil) ? counted_bytes.compact : counted_bytes.sum
-
-  total = [total_row, total_word, total_byte, 'total']
-  ARGV.size > 1 ? loaded_files << total : loaded_files
+  [{
+    row: stdin.scan(/\n/).size,
+    word: stdin.scan(/\S+/).size,
+    byte: stdin.bytesize
+  }]
 end
 
-def count_row(path, options)
-  file = File.new(path)
-  file.read.scan(/\n/).size if options.empty? || options[:l]
+def load_attributes_of_files
+  ARGV.map do |file_path|
+    file = File.new(file_path)
+    file_text = file.read
+
+    {
+      row: file_text.scan(/\n/).size,
+      word: file_text.scan(/\S+/).size,
+      byte: file_text.bytesize,
+      name: file.path
+    }
+  end
 end
 
-def count_word(path, options)
-  file = File.new(path)
-  file.read.scan(/[\S]+/).size if options.empty? || options[:w]
+def to_output_text_from_stdin_attributes(stdin_attributes, options)
+  width_for_rjust = options.one? { |_, bool| !bool } ? WIDTH_FOR_RJUST_0 : WIDTH_FOR_RJUST_7
+  output_stdin_attributes = options.all? { |_, bool| bool } ? stdin_attributes : delete_attribute_by_option(stdin_attributes, options)
+  format_attributes(output_stdin_attributes, width_for_rjust)
 end
 
-def count_byte(path, options)
-  file = File.new(path)
-  file.read.bytesize  if options.empty? || options[:c]
+def to_output_text_from_files_attributes(files_attributes, options)
+  copy_files_attributes = files_attributes.dup
+  copy_files_attributes << build_total_attributes(copy_files_attributes) if multiple_files?(copy_files_attributes)
+
+  width_for_rjust = if options.one? { |_, bool| !bool } && !multiple_files?(copy_files_attributes)
+                      WIDTH_FOR_RJUST_0
+                    else
+                      calculate_max_int_length_whole_attributes(copy_files_attributes)
+                    end
+
+  output_files_attributes = options.all? { |_, bool| bool } ? copy_files_attributes : delete_attribute_by_option(copy_files_attributes, options)
+  format_attributes(output_files_attributes, width_for_rjust)
 end
 
-def format_files(nested_files)
-  max_int_length = find_max_int_length(nested_files)
+def delete_attribute_by_option(nested_attributes, options)
+  nested_attributes.map do |attributes|
+    attributes.reject { |key, _| options[key] }
+  end
+end
 
-  nested_files.map do |files|
-    files.map do |file|
-      if file.instance_of?(Integer)
-        "#{file.to_s.rjust(max_int_length)} "
-      else
-        file
-      end
-    end.join
+def format_attributes(nested_attributes, width)
+  nested_attributes.map do |attributes|
+    attributes.values.map do |attribute|
+      attribute.instance_of?(Integer) ? "#{attribute.to_s.rjust(width)} " : attribute
+    end.join.rstrip
   end.join("\n")
 end
 
-def find_max_int_length(nested_files)
-  nested_files.map do |files|
-    files.map do |file|
-      file.to_s.length if file.instance_of?(Integer)
+def multiple_files?(files)
+  files.length > 1
+end
+
+def build_total_attributes(attributes)
+  total_row = attributes.sum { |attribute| attribute[:row] }
+  total_word = attributes.sum { |attribute| attribute[:word] }
+  total_byte = attributes.sum { |attribute| attribute[:byte] }
+
+  {
+    row: total_row,
+    word: total_word,
+    byte: total_byte,
+    name: 'total'
+  }
+end
+
+def calculate_max_int_length_whole_attributes(nested_attributes)
+  nested_attributes.map do |attributes|
+    attributes.values.map do |attribute|
+      attribute.to_s.length if attribute.instance_of?(Integer)
     end.compact
   end.flatten.max
 end
