@@ -26,27 +26,25 @@ end
 
 def load_files_attributes
   if ARGV.empty?
-    stdin = $stdin.read
-
-    [{
-      row: stdin.scan(/\n/).size,
-      word: stdin.scan(/\S+/).size,
-      byte: stdin.bytesize
-    }]
+    text = $stdin.read
+    [calculate_attributes(text)]
   else
     ARGV.map do |file_path|
       File.open(file_path) do |file|
-        file_text = file.read
-
-        {
-          row: file_text.scan(/\n/).size,
-          word: file_text.scan(/\S+/).size,
-          byte: file_text.bytesize,
-          name: file.path
-        }
+        text = file.read
+        calculate_attributes(text, file.path)
       end
     end
   end
+end
+
+def calculate_attributes(text, file_name = nil)
+  {
+    row: text.scan(/\n/).size,
+    word: text.scan(/\S+/).size,
+    byte: text.bytesize,
+    name: file_name
+  }
 end
 
 def to_output_text(files_attributes, options)
@@ -98,6 +96,7 @@ end
 
 def format_attributes(files, width)
   target_key_for_rjust = %w[row word byte]
+
   files.map do |attributes|
     attributes.map do |key, attribute|
       target_key_for_rjust.include?(key.to_s) ? "#{attribute.to_s.rjust(width)} " : attribute
