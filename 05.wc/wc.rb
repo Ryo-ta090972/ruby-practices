@@ -1,15 +1,15 @@
 # frozen_string_literal: true
 
 require 'optparse'
+require 'debug'
 
 WIDTH_FOR_RJUST_0 = 0
 WIDTH_FOR_RJUST_7 = 7
 
 def main
   options = parse_options
-  is_stdin = ARGV.empty?
-  loaded_attributes = is_stdin ? load_attributes_of_stdin : load_attributes_of_files
-  output_text = is_stdin ? to_output_text_from_stdin_attributes(loaded_attributes, options) : to_output_text_from_files_attributes(loaded_attributes, options)
+  loaded_files_attributes = load_files_attributes
+  output_text = to_output_text(loaded_files_attributes, options)
   puts output_text
 end
 
@@ -24,62 +24,37 @@ def parse_options
   options
 end
 
-def load_attributes_of_stdin
-  stdin = $stdin.read
+def load_files_attributes
+  if ARGV.empty?
+    stdin = $stdin.read
 
-  [{
-    row: stdin.scan(/\n/).size,
-    word: stdin.scan(/\S+/).size,
-    byte: stdin.bytesize
-  }]
-end
+    [{
+      row: stdin.scan(/\n/).size,
+      word: stdin.scan(/\S+/).size,
+      byte: stdin.bytesize
+    }]
+  else
+    ARGV.map do |file_path|
+      File.open(file_path) do |file|
+        file_text = file.read
 
-def load_attributes_of_files
-  ARGV.map do |file_path|
-    file = File.new(file_path)
-    file_text = file.read
-
-    {
-      row: file_text.scan(/\n/).size,
-      word: file_text.scan(/\S+/).size,
-      byte: file_text.bytesize,
-      name: file.path
-    }
+        {
+          row: file_text.scan(/\n/).size,
+          word: file_text.scan(/\S+/).size,
+          byte: file_text.bytesize,
+          name: file.path
+        }
+      end
+    end
   end
 end
 
-def to_output_text_from_stdin_attributes(stdin_attributes, options)
-  width_for_rjust = options.one? { |_, bool| !bool } ? WIDTH_FOR_RJUST_0 : WIDTH_FOR_RJUST_7
-  output_stdin_attributes = options.all? { |_, bool| bool } ? stdin_attributes : delete_attribute_by_option(stdin_attributes, options)
-  format_attributes(output_stdin_attributes, width_for_rjust)
-end
-
-def to_output_text_from_files_attributes(files_attributes, options)
+def to_output_text(files_attributes, options)
   copy_files_attributes = files_attributes.dup
   copy_files_attributes << build_total_attributes(copy_files_attributes) if multiple_files?(copy_files_attributes)
-
-  width_for_rjust = if options.one? { |_, bool| !bool } && !multiple_files?(copy_files_attributes)
-                      WIDTH_FOR_RJUST_0
-                    else
-                      calculate_max_int_length_whole_attributes(copy_files_attributes)
-                    end
-
+  width_for_rjust = calculate_width_for_rjust(copy_files_attributes, options)
   output_files_attributes = options.all? { |_, bool| bool } ? copy_files_attributes : delete_attribute_by_option(copy_files_attributes, options)
   format_attributes(output_files_attributes, width_for_rjust)
-end
-
-def delete_attribute_by_option(nested_attributes, options)
-  nested_attributes.map do |attributes|
-    attributes.reject { |key, _| options[key] }
-  end
-end
-
-def format_attributes(nested_attributes, width)
-  nested_attributes.map do |attributes|
-    attributes.values.map do |attribute|
-      attribute.instance_of?(Integer) ? "#{attribute.to_s.rjust(width)} " : attribute
-    end.join.rstrip
-  end.join("\n")
 end
 
 def multiple_files?(files)
@@ -99,12 +74,35 @@ def build_total_attributes(attributes)
   }
 end
 
-def calculate_max_int_length_whole_attributes(nested_attributes)
-  nested_attributes.map do |attributes|
+def calculate_width_for_rjust(files, options)
+  if ARGV.empty?
+    options.one? { |_, bool| !bool } ? WIDTH_FOR_RJUST_0 : WIDTH_FOR_RJUST_7
+  else
+    options.one? { |_, bool| !bool } && !multiple_files?(files) ? WIDTH_FOR_RJUST_0 : calculate_max_int_length_whole_attributes(files)
+  end
+end
+
+def calculate_max_int_length_whole_attributes(files)
+  files.map do |attributes|
     attributes.values.map do |attribute|
       attribute.to_s.length if attribute.instance_of?(Integer)
     end.compact
   end.flatten.max
+end
+
+def delete_attribute_by_option(files, options)
+  files.map do |attributes|
+    attributes.reject { |key, _| options[key] }
+  end
+end
+
+def format_attributes(files, width)
+  target_key_for_rjust = %w[row word byte]
+  files.map do |attributes|
+    attributes.map do |key, attribute|
+      target_key_for_rjust.include?(key.to_s) ? "#{attribute.to_s.rjust(width)} " : attribute
+    end.join.rstrip
+  end.join("\n")
 end
 
 main if $PROGRAM_NAME == __FILE__
