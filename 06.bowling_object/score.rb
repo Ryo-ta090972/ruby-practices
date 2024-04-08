@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class Main
+class Score
   attr_reader :frames
 
   def initialize(scores = ARGV[0])
