@@ -17,5 +17,7 @@ class Score
         @frames << score
       end
     end
+
+    @frames = @frames.each_slice(2).to_a
   end
 end
