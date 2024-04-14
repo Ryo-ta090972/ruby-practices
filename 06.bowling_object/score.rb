@@ -6,6 +6,7 @@ class Score
   def initialize(scores = ARGV[0])
     @scores = scores.split(',')
     @frames = []
+    build_frames
   end
 
   def build_frames
