@@ -1,11 +1,12 @@
+# frozen_string_literal: true
+
 require 'test/unit'
 require './score'
-require 'debug'     # binding.break
 
-class TC_Score < Test::Unit::TestCase
+class TestScore < Test::Unit::TestCase
   def test_build_frames
     score = Score.new('1,8,X')
     score.build_frames
-    assert_equal( [['1', '8'], ['X', '0']], score.frames )
+    assert_equal([%w[1 8], %w[X 0]], score.frames)
   end
 end
