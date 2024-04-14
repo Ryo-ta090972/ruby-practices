@@ -31,7 +31,7 @@ class Game
       next_next_frame = @frames[index + 2]
 
       bonus_score = if strike?(frame) && strike?(next_frame)
-                      next_frame.score + next_next_frame.score
+                      next_frame.score + next_next_frame.shots[0].score
                     elsif strike?(frame) && !strike?(next_frame)
                       next_frame.score
                     elsif frame.score == SPARE
