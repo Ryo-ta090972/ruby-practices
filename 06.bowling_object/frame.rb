@@ -3,19 +3,15 @@
 require './shot'
 
 class Frame
-  attr_reader :score
+  attr_reader :shots, :score
 
   def initialize(*shots)
-    @frames = shots.map { |shot| Shot.new(shot) }
-    @score = calculate_frame_score
+    @shots = shots.map { |shot| Shot.new(shot) }
+    @score = 0
+    calculate_score
   end
 
-  def calculate_frame_score
-    frame_score = 0
-
-    @frames.each do |shot|
-      frame_score += shot.score
-    end
-    frame_score
+  def calculate_score
+    @shots.each { |shot| @score += shot.score }
   end
 end
