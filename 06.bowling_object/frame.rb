@@ -3,15 +3,22 @@
 require './shot'
 
 class Frame
-  attr_reader :shots, :score
+  attr_reader :first_mark
 
-  def initialize(*shots)
-    @shots = shots.map { |shot| Shot.new(shot) }
-    @score = 0
-    calculate_score
+  def initialize(first_mark, second_mark)
+    @first_mark = Shot.new(first_mark)
+    @second_mark = Shot.new(second_mark)
   end
 
-  def calculate_score
-    @shots.each { |shot| @score += shot.score }
+  def score
+    @first_mark.score + @second_mark.score
+  end
+
+  def strike?
+    @first_mark.score == 10
+  end
+
+  def spare?
+    @first_mark.score + @second_mark.score == 10
   end
 end
