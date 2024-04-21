@@ -2,49 +2,44 @@
 
 require './frame'
 
-STRIKE = 'X'
-SPARE = 10
-
 class Game
-  attr_reader :score
-
-  def initialize(*table_frames)
-    @frames = table_frames.map { |frames| Frame.new(*frames) }
-    @score = calculate_normal_score + calculate_bonus_score
+  def initialize(argv = ARGV[0])
+    @marks = argv.split(',')
   end
 
-  def calculate_normal_score
-    normal_score = 0
-
-    10.times do |index|
-      normal_score += @frames[index].score
-    end
-    normal_score
+  def score
+    frames = build_frames
+    calculate_normal_score(frames) + calculate_bonus_score(frames)
   end
 
-  def calculate_bonus_score
-    total_bonus_score = 0
+  private
 
-    10.times do |index|
-      frame = @frames[index]
-      next_frame = @frames[index + 1]
-      next_next_frame = @frames[index + 2]
-
-      bonus_score = if strike?(frame) && strike?(next_frame)
-                      next_frame.score + next_next_frame.shots[0].score
-                    elsif strike?(frame) && !strike?(next_frame)
-                      next_frame.score
-                    elsif frame.score == SPARE
-                      next_frame.shots[0].score
-                    else
-                      0
-                    end
-      total_bonus_score += bonus_score
-    end
-    total_bonus_score
+  def build_frames
+    build_marks.map { |marks| Frame.new(marks[0], marks[1]) }
   end
 
-  def strike?(frame)
-    frame.shots[0].mark == STRIKE
+  def build_marks
+    @marks.flat_map { |mark| mark == 'X' ? [mark, '0'] : [mark] }.each_slice(2).to_a
+  end
+
+  def calculate_normal_score(frames)
+    frames.take(10).map(&:score).sum
+  end
+
+  def calculate_bonus_score(frames)
+    frames.take(10).map.with_index do |frame, index|
+      next_frame = frames[index + 1]
+      next_next_frame = frames[index + 2]
+
+      if frame.strike? && next_frame.strike?
+        next_frame.score + next_next_frame.first_mark.score
+      elsif frame.strike? && !next_frame.strike?
+        next_frame.score
+      elsif frame.spare?
+        next_frame.first_mark.score
+      else
+        0
+      end
+    end.sum
   end
 end
