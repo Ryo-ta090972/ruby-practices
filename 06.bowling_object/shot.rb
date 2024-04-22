@@ -2,7 +2,7 @@
 
 class Shot
   STRIKE = 'X'
-  
+
   def initialize(mark)
     @mark = mark
   end
