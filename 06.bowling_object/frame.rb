@@ -3,22 +3,29 @@
 require './shot'
 
 class Frame
-  attr_reader :first_mark
-
-  def initialize(first_mark, second_mark)
-    @first_mark = Shot.new(first_mark)
-    @second_mark = Shot.new(second_mark)
+  def initialize(shots)
+    @shots = shots
   end
 
   def score
-    @first_mark.score + @second_mark.score
+    first_shot_score + second_shot_score
   end
 
   def strike?
-    @first_mark.score == 10
+    @shots[0].strike?
   end
 
   def spare?
-    @first_mark.score + @second_mark.score == 10
+    !strike? && score == 10
+  end
+
+  def first_shot_score
+    @shots[0].score
+  end
+
+  private
+
+  def second_shot_score
+    @shots[1].score
   end
 end
