@@ -24,23 +24,23 @@ class Game
   end
 
   def calculate_normal_score(frames)
-    frames.take(10).map(&:score).sum
+    frames.take(10).sum(&:score)
   end
 
   def calculate_bonus_score(frames)
-    frames.take(10).map.with_index do |frame, index|
+    frames.take(10).each.with_index.sum do |frame, index|
       next_frame = frames[index + 1]
       next_next_frame = frames[index + 2]
 
       if frame.strike? && next_frame.strike?
-        next_frame.score + next_next_frame.first_mark.score
+        next_frame.score + next_next_frame.first_shot_score
       elsif frame.strike? && !next_frame.strike?
         next_frame.score
       elsif frame.spare?
-        next_frame.first_mark.score
+        next_frame.first_shot_score
       else
         0
       end
-    end.sum
+    end
   end
 end
