@@ -15,12 +15,12 @@ class Game
   private
 
   def build_frames
-    build_shots.map { |shots| Frame.new(shots) }
+    build_shots.each_slice(2).map { |shots| Frame.new(shots) }
   end
 
   def build_shots
     shots = @marks.map { |mark| Shot.new(mark) }
-    shots.flat_map { |shot| shot.strike? ? [shot, Shot.new('0')] : shot }.each_slice(2).to_a
+    shots.flat_map { |shot| shot.strike? ? [shot, Shot.new('0')] : shot }
   end
 
   def calculate_normal_score(frames)
