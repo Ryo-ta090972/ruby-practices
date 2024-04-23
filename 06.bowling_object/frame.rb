@@ -8,7 +8,7 @@ class Frame
   end
 
   def score
-    first_shot_score + second_shot_score
+    @shots.sum(&:score)
   end
 
   def strike?
@@ -21,11 +21,5 @@ class Frame
 
   def first_shot_score
     @shots[0].score
-  end
-
-  private
-
-  def second_shot_score
-    @shots[1].score
   end
 end
