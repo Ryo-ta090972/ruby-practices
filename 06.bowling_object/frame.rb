@@ -14,16 +14,16 @@ class Frame
 
   protected
 
-  def first_shot_score
-    @shots[0].score
+  def normal_score
+    @shots.sum(&:score)
   end
 
   def strike?
     @shots[0].strike?
   end
 
-  def normal_score
-    @shots.sum(&:score)
+  def first_shot_score
+    @shots[0].score
   end
 
   private
