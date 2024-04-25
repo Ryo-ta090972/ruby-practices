@@ -12,23 +12,25 @@ class Frame
     normal_score + calculate_bonus_score(frames)
   end
 
-  def normal_score
-    @shots.sum(&:score)
+  protected
+
+  def first_shot_score
+    @shots[0].score
   end
 
   def strike?
     @shots[0].strike?
   end
 
-  def spare?
-    !strike? && normal_score == 10
-  end
-
-  def first_shot_score
-    @shots[0].score
+  def normal_score
+    @shots.sum(&:score)
   end
 
   private
+
+  def spare?
+    !strike? && normal_score == 10
+  end
 
   def calculate_bonus_score(frames)
     next_frame = frames[@index + 1]
