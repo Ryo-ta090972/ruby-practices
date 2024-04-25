@@ -18,7 +18,7 @@ class Game
   private
 
   def build_frames
-    build_shots.each_slice(2).each_with_index.map { |shots, index| Frame.new(shots, index) }
+    build_shots.each_slice(2).with_index.map { |shots, index| Frame.new(shots, index) }
   end
 
   def build_shots
