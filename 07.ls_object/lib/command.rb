@@ -6,7 +6,7 @@ require_relative '../lib/command_line'
 class Command
   def initialize(argv = ARGV)
     command_line = CommandLine.new(argv)
-    @option = command_line.options
+    @options = command_line.options
     @paths = command_line.paths
   end
 
