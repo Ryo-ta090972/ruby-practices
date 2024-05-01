@@ -4,17 +4,11 @@ require 'optparse'
 require 'debug'
 
 class Command
-  def self.ls(argv = ARGV)
-    self.new.ls(argv)
+  def initialize(argv = ARGV)
+    @paths = argv.empty? ? ['.'] : argv
   end
 
-  def ls(argv)
-    build_output_text(argv)
-  end
-
-  private
-
-  def build_output_text(argv)
-    argv
+  def ls
+    @paths.map {|path| Dir.entries(path)}
   end
 end

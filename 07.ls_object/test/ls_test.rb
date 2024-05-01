@@ -7,8 +7,8 @@ require 'debug'
 class LsTest < Test::Unit::TestCase
   def test_ls
     argv = []
-    result = Command.ls(argv)
-    expected = []
+    result = Command.new(argv).ls
+    expected = [[".", "..", "TODO.txt", "test", ".gitkeep", "lib"]]
     assert_equal(expected, result)
   end
 end
