@@ -1,11 +1,13 @@
 # frozen_string_literal: true
 
 require 'optparse'
-require 'debug'
+require_relative '../lib/command_line'
 
 class Command
   def initialize(argv = ARGV)
-    @paths = argv.empty? ? ['.'] : argv
+    command_line = CommandLine.new(argv)
+    @option = command_line.options
+    @paths = command_line.paths
   end
 
   def ls
