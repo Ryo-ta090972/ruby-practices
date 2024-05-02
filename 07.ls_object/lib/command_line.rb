@@ -1,24 +1,24 @@
 # frozen_string_literal: true
 
-require_relative '../lib/option'
+require './lib/option'
 
 class CommandLine
-  attr_reader :options, :paths
+  attr_reader :option, :paths
 
   def initialize(argv)
-    @options = parse_option(argv)
+    @option = parse_option(argv)
     @paths = argv.empty? ? ['.'] : argv
   end
 
   private
 
   def parse_option(argv)
-    options = []
+    option = Option.new
     OptionParser.new do |opts|
-      opts.on('-a') { options << Option.new(:all) }
-      opts.on('-r') { options << Option.new(:reverse) }
-      opts.on('-l') { options << Option.new(:long) }
+      opts.on('-a') { option.apply('all') }
+      opts.on('-r') { option.apply('reverse') }
+      opts.on('-l') { option.apply('long') }
     end.parse!(argv)
-    options
+    option
   end
 end
