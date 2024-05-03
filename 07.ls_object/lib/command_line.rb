@@ -15,9 +15,9 @@ class CommandLine
   def parse_option(argv)
     option = Option.new
     OptionParser.new do |opts|
-      opts.on('-a') { option.apply('all') }
-      opts.on('-r') { option.apply('reverse') }
-      opts.on('-l') { option.apply('long') }
+      opts.on('-a') { option.activate(:@all) }
+      opts.on('-r') { option.activate(:@reverse) }
+      opts.on('-l') { option.activate(:@long) }
     end.parse!(argv)
     option
   end

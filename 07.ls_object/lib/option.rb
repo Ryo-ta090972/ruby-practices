@@ -11,8 +11,19 @@ class Option
     @long = OptionLong.new
   end
 
-  def apply(type)
-    instance_variable = instance_variable_get("@#{type}")
-    instance_variable.send(:apply) if instance_variable
+  def activate(type)
+    option = instance_variable_get(type)
+    option.send(:activate) if option
+  end
+
+  def execute(nested_entries, paths)
+    nested_entries.each_with_index.map do |entries, index|
+      current_entries = entries
+      instance_variables.each do |type|
+        option = instance_variable_get(type)
+        current_entries = option.send(:execute, current_entries, paths[index])
+      end
+      current_entries
+    end
   end
 end

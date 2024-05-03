@@ -2,6 +2,7 @@
 
 require 'optparse'
 require './lib/command_line'
+require './lib/format'
 
 class Command
   def initialize(argv = ARGV)
@@ -9,6 +10,14 @@ class Command
   end
 
   def ls
+    entries = build_entries
+    updated_entries = option.execute(entries, paths)
+    Format.output(updated_entries)
+  end
+
+  private
+
+  def build_entries
     paths.map {|path| Dir.entries(path)}
   end
 
