@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 class OptionBase
+  attr_reader :is_active
+
   def initialize
     @is_active = false
   end
@@ -10,16 +12,12 @@ class OptionBase
   end
 
   def execute(entries, path)
-    @is_active ? apply_option(entries, path) : apply_default_behavior(entries, path)
+    @is_active ? apply(entries, path) : entries
   end
 
   private
 
-  def apply_option(entries, path)
-    raise NotImplementedError, "#{self.class.name} must implement abstract_method"
-  end
-
-  def apply_default_behavior(entries, path)
+  def apply(entries, path)
     raise NotImplementedError, "#{self.class.name} must implement abstract_method"
   end
 end

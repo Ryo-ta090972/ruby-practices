@@ -3,11 +3,7 @@
 require './lib/option_base'
 
 class OptionReverse < OptionBase
-  def apply_option(entries, _)
+  def apply(entries, _)
     entries.sort.reverse
-  end
-
-  def apply_default_behavior(entries, _)
-    entries.sort
   end
 end

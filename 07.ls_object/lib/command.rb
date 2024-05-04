@@ -3,6 +3,7 @@
 require 'optparse'
 require './lib/command_line'
 require './lib/format'
+require 'debug'
 
 class Command
   def initialize(argv = ARGV)
@@ -10,15 +11,18 @@ class Command
   end
 
   def ls
-    entries = build_entries
-    updated_entries = option.execute(entries, paths)
-    Format.output(updated_entries)
+    visible_entries = build_visible_entries
+    updated_entries = option.execute(visible_entries, paths)
+    Format.arrange(updated_entries, option)
   end
 
   private
 
-  def build_entries
-    paths.map {|path| Dir.entries(path)}
+  def build_visible_entries
+    binding.break
+    paths.map do |path|
+      Dir.entries(path).reject { |entry| entry.start_with?('.')}.sort
+    end
   end
 
   def option

@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require './lib/option_base'
+require 'etc'
 
 class OptionLong < OptionBase
   FILE_TYPE = {
@@ -39,13 +40,9 @@ class OptionLong < OptionBase
 
   private
 
-  def apply_option(entries, path)
+  def apply(entries, path)
     attributes = load_attributes(entries, path)
     attributes.unshift(["total #{count_total_block_size(entries, path)}"])
-  end
-
-  def apply_default_behavior(entries, _)
-    entries
   end
 
   def load_attributes(entries, path)

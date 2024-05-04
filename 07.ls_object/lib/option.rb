@@ -5,6 +5,8 @@ require './lib/option_reverse'
 require './lib/option_long'
 
 class Option
+  attr_reader :long
+
   def initialize
     @all = OptionAll.new
     @reverse= OptionReverse.new
