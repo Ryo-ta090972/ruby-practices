@@ -37,17 +37,4 @@ class LongFormat < ShortFormat
       end
     end
   end
-
-  def convert_output_string(entry_groups)
-    entry_groups.each_with_object([]) do |(path, group_entries), output_strings|
-      output_strings << "#{path.to_s}:\n" if !entry_groups.one?
-      group_entries.each do |entries|
-        entries.each do |entry|
-          output_strings << entry
-        end
-        output_strings << "\n"
-      end
-      output_strings << "\n"
-    end.join.chomp
-  end
 end

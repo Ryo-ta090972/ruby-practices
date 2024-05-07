@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require './lib/option'
+require './lib/option_controller'
 
 class CommandLine
   attr_reader :option, :paths
@@ -13,7 +13,7 @@ class CommandLine
   private
 
   def parse_option(argv)
-    option = Option.new
+    option = OptionController.new
     OptionParser.new do |opts|
       opts.on('-a') { option.activate(:@all) }
       opts.on('-r') { option.activate(:@reverse) }

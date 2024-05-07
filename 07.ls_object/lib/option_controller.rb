@@ -4,7 +4,7 @@ require './lib/option_all'
 require './lib/option_reverse'
 require './lib/option_long'
 
-class Option
+class OptionController
   attr_reader :long
 
   def initialize
