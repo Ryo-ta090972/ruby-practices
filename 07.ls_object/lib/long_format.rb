@@ -31,7 +31,7 @@ class LongFormat < ShortFormat
           if entry.instance_of?(Integer)
             "#{entry.to_s.rjust(max_sizes[path][column])} "
           else
-            "#{entry.to_s.ljust(max_sizes[path][column])}  "
+            "#{entry.to_s.ljust(max_sizes[path][column])} "
           end
         end
       end
