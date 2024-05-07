@@ -18,11 +18,13 @@ class Option
     option.send(:activate) if option
   end
 
-  def execute(nested_entries)
-    nested_entries.each_with_object({}) do |(path, entries), updated_entries|
+  def execute(entry_groups)
+    entry_groups.each_with_object({}) do |(path, group_entries), updated_entries|
+      current_entries = group_entries
       instance_variables.each do |type|
         option = instance_variable_get(type)
-        updated_entries[path] = option.send(:execute, entries, path)
+        current_entries = option.send(:execute, current_entries, path)
+        updated_entries[path] = current_entries
       end
     end
   end
