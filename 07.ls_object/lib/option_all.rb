@@ -3,7 +3,7 @@
 require './lib/option_base'
 
 class OptionAll < OptionBase
-  def apply(entries, path)
+  def apply(_, path)
     Dir.entries(path).sort
   end
 end

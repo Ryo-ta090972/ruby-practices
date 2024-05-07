@@ -2,8 +2,7 @@
 
 require 'optparse'
 require './lib/command_line'
-require './lib/format'
-require 'debug'
+require './lib/format_factory'
 
 class Command
   def initialize(argv = ARGV)
@@ -12,17 +11,19 @@ class Command
 
   def ls
     visible_entries = build_visible_entries
-    updated_entries = option.execute(visible_entries, paths)
-    Format.arrange(updated_entries, option)
+    updated_entries = option.execute(visible_entries)
+    format = FormatFactory.create(option, updated_entries)
+    format.execute
   end
 
   private
 
   def build_visible_entries
-    binding.break
-    paths.map do |path|
-      Dir.entries(path).reject { |entry| entry.start_with?('.')}.sort
-    end
+    visible_entries = paths.to_h do |path|
+                        [path, Dir.entries(path).reject { |entry| entry.start_with?('.')}.sort]
+                      end
+
+    visible_entries.keys.sort.each_with_object({}) { |key, sorted_entries| sorted_entries[key] = visible_entries[key] }
   end
 
   def option
