@@ -2,7 +2,8 @@
 
 class ShortFormat
   COLUMN = 3
-  WIDTH = 22
+  WIDTH_14 = 14
+  WIDTH_22 = 22
 
   def initialize(entry_groups)
     @entry_groups = entry_groups
@@ -40,8 +41,10 @@ class ShortFormat
         entries.each_with_index do |entry, index|
           output_strings << if last?(entries, index)
                               "#{entry}\n"
+                            elsif rows[path] == 1
+                              "#{entry.to_s.ljust(WIDTH_14)}  "
                             else
-                              "#{entry.to_s.ljust(WIDTH)}  "
+                              "#{entry.to_s.ljust(WIDTH_22)}  "
                             end
         end
       end
