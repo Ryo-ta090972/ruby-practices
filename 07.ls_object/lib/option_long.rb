@@ -49,14 +49,13 @@ class OptionLong < OptionBase
     entries.map do |entry|
       entry_path = File.absolute_path(entry, path)
       file_stat = File::Stat.new(entry_path)
-
       [
         build_type_and_permission(file_stat),
         file_stat.nlink,
         Etc.getpwuid(file_stat.uid).name,
         Etc.getgrgid(file_stat.gid).name,
         file_stat.size,
-        file_stat.mtime.strftime('%-m %e %H:%M'),
+        file_stat.mtime,
         entry
       ]
     end
