@@ -19,12 +19,10 @@ class OptionController
   end
 
   def execute(entry_groups)
-    entry_groups.each_with_object({}) do |(path, group_entries), updated_entries|
-      current_entries = group_entries
-      instance_variables.each do |type|
+    entry_groups.transform_values do |group_entries|
+      instance_variables.reduce(group_entries) do |current_entries, type|
         option = instance_variable_get(type)
-        current_entries = option&.send(:execute, current_entries, path)
-        updated_entries[path] = current_entries
+        option&.execute(current_entries, entry_groups.key(group_entries))
       end
     end
   end
