@@ -2,8 +2,8 @@
 
 class ShortFormat
   COLUMN = 3
-  WIDTH_14 = 14
-  WIDTH_22 = 22
+  SMALL_WIDTH = 14
+  LARGE_WIDTH = 22
 
   def initialize(entry_groups)
     @entry_groups = entry_groups
@@ -20,10 +20,9 @@ class ShortFormat
     @entry_groups.transform_values do |group_entries|
       path = @entry_groups.key(group_entries)
 
-      transposed_group_entries = group_entries.each_slice(rows[path]).map do |entries|
+      group_entries.each_slice(rows[path]).map do |entries|
         entries.values_at(0...rows[path])
-      end.transpose
-      transposed_group_entries.map(&:compact)
+      end.transpose.map(&:compact)
     end
   end
 
@@ -42,9 +41,9 @@ class ShortFormat
           output_strings << if last?(entries, index)
                               "#{entry}\n"
                             elsif rows[path] == 1
-                              "#{entry.to_s.ljust(WIDTH_14)}  "
+                              "#{entry.to_s.ljust(SMALL_WIDTH)}  "
                             else
-                              "#{entry.to_s.ljust(WIDTH_22)}  "
+                              "#{entry.to_s.ljust(LARGE_WIDTH)}  "
                             end
         end
       end
