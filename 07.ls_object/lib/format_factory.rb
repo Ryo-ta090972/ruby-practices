@@ -5,7 +5,7 @@ require './lib/long_format'
 
 class FormatFactory
   def self.create(option, entry_groups)
-    self.new.create(option, entry_groups)
+    new.create(option, entry_groups)
   end
 
   def create(option, entry_groups)

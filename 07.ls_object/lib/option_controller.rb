@@ -9,13 +9,13 @@ class OptionController
 
   def initialize
     @all = OptionAll.new
-    @reverse= OptionReverse.new
+    @reverse = OptionReverse.new
     @long = OptionLong.new
   end
 
   def activate(type)
     option = instance_variable_get(type)
-    option.send(:activate) if option
+    option&.send(:activate)
   end
 
   def execute(entry_groups)
@@ -23,7 +23,7 @@ class OptionController
       current_entries = group_entries
       instance_variables.each do |type|
         option = instance_variable_get(type)
-        current_entries = option.send(:execute, current_entries, path)
+        current_entries = option&.send(:execute, current_entries, path)
         updated_entries[path] = current_entries
       end
     end

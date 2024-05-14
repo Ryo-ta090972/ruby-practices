@@ -1,12 +1,11 @@
 # frozen_string_literal: true
-require 'debug'
+
 class LongFormat
   def initialize(entry_groups)
     @entry_groups = entry_groups
   end
 
   def execute
-    # binding.break
     max_string_sizes_of_each_columns = cal_max_string_size_of_each_columns
     formatted_entry_groups = format_entry_groups(max_string_sizes_of_each_columns)
     convert_output_string(formatted_entry_groups)
@@ -15,8 +14,8 @@ class LongFormat
   private
 
   def cal_max_string_size_of_each_columns
-    @entry_groups.each_with_object({}) do |(path, group_entries), max_string_sizes|
-      max_string_sizes[path] = group_entries.drop(1).transpose.map do |entries|
+    @entry_groups.transform_values do |group_entries|
+      group_entries.drop(1).transpose.map do |entries|
         entries.map do |entry|
           entry.to_s.size
         end.max
@@ -45,14 +44,14 @@ class LongFormat
   def convert_output_string(entry_groups)
     entry_groups.each_with_object([]) do |(path, group_entries), output_strings|
       output_strings << "#{path}:\n" if !entry_groups.one?
-      
+
       group_entries.each do |entries|
         entries.each_with_index do |entry, index|
-          if last?(entries, index)
-            output_strings << "#{entry}\n"
-          else
-            output_strings << "#{entry.to_s}"
-          end
+          output_strings << if last?(entries, index)
+                              "#{entry}\n"
+                            else
+                              entry.to_s
+                            end
         end
       end
       output_strings << "\n"

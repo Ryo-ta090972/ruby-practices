@@ -2,7 +2,6 @@
 
 require 'test/unit'
 require_relative '../lib/command'
-require 'debug'
 
 class CommandTest < Test::Unit::TestCase
   def test_ls_when_single_path

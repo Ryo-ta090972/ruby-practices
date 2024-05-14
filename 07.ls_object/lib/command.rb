@@ -20,8 +20,8 @@ class Command
 
   def build_visible_entries
     visible_entries = paths.to_h do |path|
-                        [path, Dir.entries(path).reject { |entry| entry.start_with?('.')}.sort]
-                      end
+      [path, Dir.entries(path).reject { |entry| entry.start_with?('.') }.sort]
+    end
 
     visible_entries.keys.sort.each_with_object({}) { |key, sorted_entries| sorted_entries[key] = visible_entries[key] }
   end

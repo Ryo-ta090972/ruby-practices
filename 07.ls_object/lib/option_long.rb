@@ -5,12 +5,12 @@ require 'etc'
 
 class OptionLong < OptionBase
   FILE_TYPE = {
-  '01' => 'p',
-  '02' => 'c',
-  '04' => 'd',
-  '10' => '-',
-  '12' => 'l',
-  '14' => 's'
+    '01' => 'p',
+    '02' => 'c',
+    '04' => 'd',
+    '10' => '-',
+    '12' => 'l',
+    '14' => 's'
   }.freeze
 
   PERMISSION = {
