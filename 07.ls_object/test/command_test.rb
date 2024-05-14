@@ -64,13 +64,13 @@ class CommandTest < Test::Unit::TestCase
     result = Command.new(argv).ls
     expected = <<~TEXT.chomp
     total 0
-    -rw-r--r-- 1 ryo staff  0 5  7 18:09 Ellen.txt
-    -rw-r--r-- 1 ryo staff  0 5  7 18:10 Frank.txt
-    -rwSr--r-- 1 ryo staff  0 5  7 18:07 alice
-    -rw-r-Sr-- 1 ryo staff  0 5  7 18:08 bob.txt
-    -rw-r--r-- 1 ryo staff  0 5  7 18:08 carol.rb
-    -rw-r--r-- 1 ryo staff  0 5  7 18:08 dave.js
-    drwxr-xr-t 2 ryo staff 64 5  7 18:20 gim
+    -rw-r--r--  1 ryo  staff   0  5  7 18:09 Ellen.txt
+    -rw-r--r--  1 ryo  staff   0  5  7 18:10 Frank.txt
+    -rwSr--r--  1 ryo  staff   0  5  7 18:07 alice
+    -rw-r-Sr--  1 ryo  staff   0  5  7 18:08 bob.txt
+    -rw-r--r--  1 ryo  staff   0  5  7 18:08 carol.rb
+    -rw-r--r--  1 ryo  staff   0  5  7 18:08 dave.js
+    drwxr-xr-t  2 ryo  staff  64  5  7 18:20 gim
     TEXT
 
     assert_equal(expected, result)
@@ -81,21 +81,21 @@ class CommandTest < Test::Unit::TestCase
     result = Command.new(argv).ls
     expected = <<~TEXT.chomp
     total 0
-    drwxr-xr-x 15 ryo staff 480 5  7 18:20 .
-    drwxr-xr-x  4 ryo staff 128 5  7 18:03 ..
-    -rw-r--r--  1 ryo staff   0 5  7 18:11 .Carol_hidden.rb
-    -rw-r--r--  1 ryo staff   0 5  7 18:11 .Dave_hidden.js
-    -rw-r--r--  1 ryo staff   0 5  7 18:11 .Frank_hidden.txt
-    -rw-r--r--  1 ryo staff   0 5  7 18:10 .alice_hidden
-    -rw-r--r--  1 ryo staff   0 5  7 18:10 .bob_hidden.txt
-    -rw-r--r--  1 ryo staff   0 5  7 18:11 .ellen_hidden.txt
-    -rw-r--r--  1 ryo staff   0 5  7 18:09 Ellen.txt
-    -rw-r--r--  1 ryo staff   0 5  7 18:10 Frank.txt
-    -rwSr--r--  1 ryo staff   0 5  7 18:07 alice
-    -rw-r-Sr--  1 ryo staff   0 5  7 18:08 bob.txt
-    -rw-r--r--  1 ryo staff   0 5  7 18:08 carol.rb
-    -rw-r--r--  1 ryo staff   0 5  7 18:08 dave.js
-    drwxr-xr-t  2 ryo staff  64 5  7 18:20 gim
+    drwxr-xr-x  15 ryo  staff  480  5  8 07:46 .
+    drwxr-xr-x   4 ryo  staff  128  5 14 15:42 ..
+    -rw-r--r--   1 ryo  staff    0  5  7 18:11 .Carol_hidden.rb
+    -rw-r--r--   1 ryo  staff    0  5  7 18:11 .Dave_hidden.js
+    -rw-r--r--   1 ryo  staff    0  5  7 18:11 .Frank_hidden.txt
+    -rw-r--r--   1 ryo  staff    0  5  7 18:10 .alice_hidden
+    -rw-r--r--   1 ryo  staff    0  5  7 18:10 .bob_hidden.txt
+    -rw-r--r--   1 ryo  staff    0  5  7 18:11 .ellen_hidden.txt
+    -rw-r--r--   1 ryo  staff    0  5  7 18:09 Ellen.txt
+    -rw-r--r--   1 ryo  staff    0  5  7 18:10 Frank.txt
+    -rwSr--r--   1 ryo  staff    0  5  7 18:07 alice
+    -rw-r-Sr--   1 ryo  staff    0  5  7 18:08 bob.txt
+    -rw-r--r--   1 ryo  staff    0  5  7 18:08 carol.rb
+    -rw-r--r--   1 ryo  staff    0  5  7 18:08 dave.js
+    drwxr-xr-t   2 ryo  staff   64  5  7 18:20 gim
     TEXT
 
     assert_equal(expected, result)
@@ -106,21 +106,21 @@ class CommandTest < Test::Unit::TestCase
     result = Command.new(argv).ls
     expected = <<~TEXT.chomp
     total 0
-    drwxr-xr-t  2 ryo staff  64 5  7 18:20 gim
-    -rw-r--r--  1 ryo staff   0 5  7 18:08 dave.js
-    -rw-r--r--  1 ryo staff   0 5  7 18:08 carol.rb
-    -rw-r-Sr--  1 ryo staff   0 5  7 18:08 bob.txt
-    -rwSr--r--  1 ryo staff   0 5  7 18:07 alice
-    -rw-r--r--  1 ryo staff   0 5  7 18:10 Frank.txt
-    -rw-r--r--  1 ryo staff   0 5  7 18:09 Ellen.txt
-    -rw-r--r--  1 ryo staff   0 5  7 18:11 .ellen_hidden.txt
-    -rw-r--r--  1 ryo staff   0 5  7 18:10 .bob_hidden.txt
-    -rw-r--r--  1 ryo staff   0 5  7 18:10 .alice_hidden
-    -rw-r--r--  1 ryo staff   0 5  7 18:11 .Frank_hidden.txt
-    -rw-r--r--  1 ryo staff   0 5  7 18:11 .Dave_hidden.js
-    -rw-r--r--  1 ryo staff   0 5  7 18:11 .Carol_hidden.rb
-    drwxr-xr-x  4 ryo staff 128 5  7 18:03 ..
-    drwxr-xr-x 15 ryo staff 480 5  7 18:20 .
+    drwxr-xr-t   2 ryo  staff   64  5  7 18:20 gim
+    -rw-r--r--   1 ryo  staff    0  5  7 18:08 dave.js
+    -rw-r--r--   1 ryo  staff    0  5  7 18:08 carol.rb
+    -rw-r-Sr--   1 ryo  staff    0  5  7 18:08 bob.txt
+    -rwSr--r--   1 ryo  staff    0  5  7 18:07 alice
+    -rw-r--r--   1 ryo  staff    0  5  7 18:10 Frank.txt
+    -rw-r--r--   1 ryo  staff    0  5  7 18:09 Ellen.txt
+    -rw-r--r--   1 ryo  staff    0  5  7 18:11 .ellen_hidden.txt
+    -rw-r--r--   1 ryo  staff    0  5  7 18:10 .bob_hidden.txt
+    -rw-r--r--   1 ryo  staff    0  5  7 18:10 .alice_hidden
+    -rw-r--r--   1 ryo  staff    0  5  7 18:11 .Frank_hidden.txt
+    -rw-r--r--   1 ryo  staff    0  5  7 18:11 .Dave_hidden.js
+    -rw-r--r--   1 ryo  staff    0  5  7 18:11 .Carol_hidden.rb
+    drwxr-xr-x   4 ryo  staff  128  5 14 15:42 ..
+    drwxr-xr-x  15 ryo  staff  480  5  8 07:46 .
     TEXT
 
     assert_equal(expected, result)
