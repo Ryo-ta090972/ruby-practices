@@ -16,11 +16,13 @@ class ShortFormat
   private
 
   def reposition_entry_groups
-    @entry_groups.each_with_object({}) do |(path, group_entries), repositioned_entry_groups|
+    @entry_groups.transform_values do |group_entries|
+      path = @entry_groups.key(group_entries)
+
       transposed_group_entries = group_entries.each_slice(rows[path]).map do |entries|
         entries.values_at(0...rows[path])
       end.transpose
-      repositioned_entry_groups[path] = transposed_group_entries.map(&:compact)
+      transposed_group_entries.map(&:compact)
     end
   end
 

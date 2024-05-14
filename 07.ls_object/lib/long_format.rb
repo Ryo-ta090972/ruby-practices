@@ -6,12 +6,35 @@ class LongFormat
   end
 
   def execute
-    max_string_sizes_of_each_columns = cal_max_string_size_of_each_columns
-    formatted_entry_groups = format_entry_groups(max_string_sizes_of_each_columns)
+    formatted_entry_groups = format_entry_groups
     convert_output_string(formatted_entry_groups)
   end
 
   private
+
+  def format_entry_groups
+    max_string_sizes = cal_max_string_size_of_each_columns
+
+    @entry_groups.transform_values do |group_entries|
+      path = @entry_groups.key(group_entries)
+
+      group_entries.map do |entries|
+        entries.each_with_index.map do |entry, column|
+          max_string_size = max_string_sizes[path][column]
+
+          if entry.instance_of?(Integer)
+            "#{entry.to_s.rjust(max_string_size)} "
+          elsif entry.instance_of?(Time)
+            "#{entry.strftime('%_m %e %H:%M')} "
+          elsif last?(entries, column)
+            entry
+          else
+            "#{entry.to_s.ljust(max_string_size)}  "
+          end
+        end
+      end
+    end
+  end
 
   def cal_max_string_size_of_each_columns
     @entry_groups.transform_values do |group_entries|
@@ -23,22 +46,8 @@ class LongFormat
     end
   end
 
-  def format_entry_groups(max_sizes)
-    @entry_groups.each_with_object({}) do |(path, group_entries), formatted_entry_groups|
-      formatted_entry_groups[path] = group_entries.map do |entries|
-        entries.each_with_index.map do |entry, column|
-          if entry.instance_of?(Integer)
-            "#{entry.to_s.rjust(max_sizes[path][column])} "
-          elsif entry.instance_of?(Time)
-            "#{entry.strftime('%_m %e %H:%M')} "
-          elsif last?(entries, column)
-            entry
-          else
-            "#{entry.to_s.ljust(max_sizes[path][column])}  "
-          end
-        end
-      end
-    end
+  def last?(entries, index)
+    index == entries.size - 1
   end
 
   def convert_output_string(entry_groups)
@@ -56,9 +65,5 @@ class LongFormat
       end
       output_strings << "\n"
     end.join.rstrip
-  end
-
-  def last?(entries, index)
-    index == entries.size - 1
   end
 end
