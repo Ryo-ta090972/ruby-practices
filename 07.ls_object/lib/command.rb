@@ -10,20 +10,22 @@ class Command
   end
 
   def ls
-    visible_entries = build_visible_entries
-    updated_entries = option.execute(visible_entries)
-    format = FormatFactory.create(option, updated_entries)
+    format = create_format
     format.execute
   end
 
   private
 
-  def build_visible_entries
-    visible_entries = paths.to_h do |path|
-      [path, Dir.entries(path).reject { |entry| entry.start_with?('.') }.sort]
-    end
+  def create_format
+    visible_entries = build_visible_entries
+    updated_entries = option.execute(visible_entries)
+    FormatFactory.create(option, updated_entries)
+  end
 
-    visible_entries.keys.sort.each_with_object({}) { |key, sorted_entries| sorted_entries[key] = visible_entries[key] }
+  def build_visible_entries
+    paths.sort.each_with_object({}) do |path, visible_entries|
+      visible_entries[path] = Dir.entries(path).reject { |entry| entry.start_with?('.') }.sort
+    end
   end
 
   def option
