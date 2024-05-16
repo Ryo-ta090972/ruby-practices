@@ -8,9 +8,9 @@ class CommandTest < Test::Unit::TestCase
     argv = ['./test/sample_dir']
     result = Command.new(argv).ls
     expected = <<~TEXT.chomp
-      Ellen.txt               bob.txt                 gim
-      Frank.txt               carol.rb
-      alice                   dave.js
+      Ellen.txt       bob.txt         gim
+      Frank.txt       carol.rb
+      alice           dave.js
     TEXT
 
     assert_equal(expected, result)
@@ -21,12 +21,12 @@ class CommandTest < Test::Unit::TestCase
     result = Command.new(argv).ls
     expected = <<~TEXT.chomp
       ./test:
-      command_test.rb  sample_dir
-
+      command_test.rb sample_dir
+      
       ./test/sample_dir:
-      Ellen.txt               bob.txt                 gim
-      Frank.txt               carol.rb
-      alice                   dave.js
+      Ellen.txt       bob.txt         gim
+      Frank.txt       carol.rb
+      alice           dave.js
     TEXT
 
     assert_equal(expected, result)
@@ -50,9 +50,9 @@ class CommandTest < Test::Unit::TestCase
     argv = ['-r', './test/sample_dir']
     result = Command.new(argv).ls
     expected = <<~TEXT.chomp
-      gim                     bob.txt                 Ellen.txt
-      dave.js                 alice
-      carol.rb                Frank.txt
+      gim             bob.txt         Ellen.txt
+      dave.js         alice
+      carol.rb        Frank.txt
     TEXT
 
     assert_equal(expected, result)
@@ -81,7 +81,7 @@ class CommandTest < Test::Unit::TestCase
     expected = <<~TEXT.chomp
       total 0
       drwxr-xr-x  15 ryo  staff  480  5  8 07:46 .
-      drwxr-xr-x   4 ryo  staff  128  5 14 15:42 ..
+      drwxr-xr-x   4 ryo  staff  128  5 15 20:06 ..
       -rw-r--r--   1 ryo  staff    0  5  7 18:11 .Carol_hidden.rb
       -rw-r--r--   1 ryo  staff    0  5  7 18:11 .Dave_hidden.js
       -rw-r--r--   1 ryo  staff    0  5  7 18:11 .Frank_hidden.txt
@@ -118,7 +118,7 @@ class CommandTest < Test::Unit::TestCase
       -rw-r--r--   1 ryo  staff    0  5  7 18:11 .Frank_hidden.txt
       -rw-r--r--   1 ryo  staff    0  5  7 18:11 .Dave_hidden.js
       -rw-r--r--   1 ryo  staff    0  5  7 18:11 .Carol_hidden.rb
-      drwxr-xr-x   4 ryo  staff  128  5 14 15:42 ..
+      drwxr-xr-x   4 ryo  staff  128  5 15 20:06 ..
       drwxr-xr-x  15 ryo  staff  480  5  8 07:46 .
     TEXT
 
