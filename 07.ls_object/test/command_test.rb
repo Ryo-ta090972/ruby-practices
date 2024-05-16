@@ -22,7 +22,7 @@ class CommandTest < Test::Unit::TestCase
     expected = <<~TEXT.chomp
       ./test:
       command_test.rb sample_dir
-      
+
       ./test/sample_dir:
       Ellen.txt       bob.txt         gim
       Frank.txt       carol.rb
