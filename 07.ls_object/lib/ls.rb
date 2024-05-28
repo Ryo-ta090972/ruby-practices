@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-require './lib/command'
+require './lib/display'
 
-command = Command.new
-puts command.ls
+print Display.output
