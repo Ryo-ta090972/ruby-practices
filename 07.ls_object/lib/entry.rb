@@ -102,6 +102,7 @@ class Entry
     authority_permission = permission.dup
     index = AUTHORITY_INDEX[authority_number]
     authority_permission[index] = AUTHORITY_TYPE[authority_number][authority_permission[index]]
+    authority_permission
   end
 
   def directory?
