@@ -1,24 +1,24 @@
 # frozen_string_literal: true
 
-require './lib/option_controller'
+require 'optparse'
 
 class CommandLine
-  attr_reader :option, :paths
+  attr_reader :options, :paths
 
-  def initialize(argv)
-    @option = parse_option(argv)
-    @paths = argv.empty? ? ['.'] : argv
+  def initialize(argv = ARGV)
+    @options = parse_options(argv)
+    @paths = argv.empty? ? ['.'] : argv.sort
   end
 
   private
 
-  def parse_option(argv)
-    option = OptionController.new
+  def parse_options(argv)
+    options = {}
     OptionParser.new do |opts|
-      opts.on('-a') { option.activate(:@all) }
-      opts.on('-r') { option.activate(:@reverse) }
-      opts.on('-l') { option.activate(:@long) }
+      opts.on('-a') { options[:all] = true }
+      opts.on('-r') { options[:reverse] = true }
+      opts.on('-l') { options[:long] = true }
     end.parse!(argv)
-    option
+    options
   end
 end
