@@ -45,15 +45,8 @@ class FileDetail
     @name = name
   end
 
-  def type
-    type_number = file_number[0, 2]
-    FILE_TYPE[type_number]
-  end
-
-  def permission
-    permission_number = file_number[3, 3]
-    permission = permission_number.gsub(/./, PERMISSION)
-    authority? ? to_authority(permission) : permission
+  def type_and_permission
+    type + permission
   end
 
   def nlink
@@ -81,6 +74,17 @@ class FileDetail
   end
 
   private
+
+  def type
+    type_number = file_number[0, 2]
+    FILE_TYPE[type_number]
+  end
+
+  def permission
+    permission_number = file_number[3, 3]
+    permission = permission_number.gsub(/./, PERMISSION)
+    authority? ? to_authority(permission) : permission
+  end
 
   def file_stat
     File::Stat.new(@path)
