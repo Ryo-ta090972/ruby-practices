@@ -6,7 +6,7 @@ require_relative 'formatter'
 
 class LsCommand
   def self.execute
-    command_line = CommandLine.new
+    command_line = CommandLine.new(ARGV)
     options = command_line.options
     paths = command_line.paths
     new.render(options, paths)
