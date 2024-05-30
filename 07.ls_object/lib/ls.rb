@@ -2,4 +2,4 @@
 
 require_relative 'ls_command'
 
-print LsCommand.output
+print LsCommand.execute
