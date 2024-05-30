@@ -4,7 +4,7 @@ require_relative 'command_line'
 require_relative 'directory'
 require_relative 'formatter'
 
-class Display
+class LsCommand
   def self.output
     command_line = CommandLine.new
     options = command_line.options

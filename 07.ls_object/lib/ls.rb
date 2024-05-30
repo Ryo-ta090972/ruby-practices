@@ -1,5 +1,5 @@
 # frozen_string_literal: true
 
-require './lib/display'
+require_relative 'ls_command'
 
-print Display.output
+print LsCommand.output
