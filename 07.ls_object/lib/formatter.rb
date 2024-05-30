@@ -4,14 +4,16 @@ class Formatter
   COLUMN = 3
   SPACE = 8
 
-  def initialize(options)
-    @options = options
+  def initialize(show_all, reverse_order, show_long_format)
+    @show_all = show_all
+    @reverse_order = reverse_order
+    @show_long_format = show_long_format
   end
 
   def format(directory, paths)
-    target_entries = @options[:all] ? directory.entries : directory.entries.reject { |entry| entry.name.start_with?('.') }
-    sorted_entries = @options[:reverse] ? target_entries.reverse : target_entries
-    formatter_entries = @options[:long] ? long_format(sorted_entries) : short_format(sorted_entries)
+    target_entries = @show_all ? directory.entries : directory.entries.reject { |entry| entry.name.start_with?('.') }
+    sorted_entries = @reverse_order ? target_entries.reverse : target_entries
+    formatter_entries = @show_long_format ? long_format(sorted_entries) : short_format(sorted_entries)
     multiple?(paths) ? ["#{directory.path}:", formatter_entries].join("\n") : formatter_entries
   end
 
