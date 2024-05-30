@@ -2,7 +2,7 @@
 
 require 'etc'
 
-class Entry
+class FileDetail
   attr_reader :name
 
   FILE_TYPE = {
