@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require './lib/entry'
+require_relative 'entry'
 
 class Directory
   attr_reader :path, :entries

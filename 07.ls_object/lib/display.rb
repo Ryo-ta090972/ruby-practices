@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
-require './lib/command_line'
-require './lib/directory'
-require './lib/formatter'
+require_relative 'command_line'
+require_relative 'directory'
+require_relative 'formatter'
 
 class Display
   def self.output
