@@ -14,7 +14,7 @@ class Formatter
     target_files = @show_all ? directory.files : directory.files.reject { |file| file.name.start_with?('.') }
     sorted_files = @reverse_order ? target_files.reverse : target_files
     max_sizes = directory.find_max_size_of_file_details(sorted_files)
-    formatter_files = @show_long_format ? long_format(sorted_files, max_sizes) : short_format(sorted_files, max_sizes)
+    formatter_files = @show_long_format ? long_format(sorted_files, max_sizes) : short_format(sorted_files, max_sizes[:name])
     multiple?(paths) ? ["#{directory.path}:", formatter_files].join("\n") : formatter_files
   end
 
@@ -40,10 +40,9 @@ class Formatter
     end.join
   end
 
-  def short_format(files, max_sizes)
+  def short_format(files, max_size)
     file_names = files.map(&:name)
     row = cal_row(file_names)
-    max_size = max_sizes[:name]
     width = cal_width(max_size)
     transposed_file_names = transpose_file_names(file_names, row)
     format_names(transposed_file_names, width)
