@@ -5,15 +5,15 @@ require_relative 'file_detail'
 class Directory
   attr_reader :path, :files
 
-  FILE_DETAILS = [
-    :type_and_permission,
-    :nlink,
-    :uid,
-    :gid,
-    :size,
-    :mtime,
-    :name
-  ]
+  FILE_DETAILS = %i[
+    type_and_permission
+    nlink
+    uid
+    gid
+    size
+    mtime
+    name
+  ].freeze
 
   def initialize(path)
     @path = path

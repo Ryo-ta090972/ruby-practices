@@ -36,7 +36,7 @@ class Formatter
         file.size.to_s.rjust(max_sizes[:size]),
         file.mtime.strftime('%_m %e %H:%M'),
         "#{file.name}\n"
-      ].join(" ")
+      ].join(' ')
     end.join
   end
 
@@ -70,7 +70,7 @@ class Formatter
   def format_names(rows_file_names, width)
     rows_file_names.map do |row_file_names|
       row_file_names.each_with_index.map do |file_name, column|
-        last?(row_file_names, column) ? "#{file_name.to_s}\n" : file_name.to_s.ljust(width)
+        last?(row_file_names, column) ? "#{file_name}\n" : file_name.to_s.ljust(width)
       end.join
     end.join
   end
