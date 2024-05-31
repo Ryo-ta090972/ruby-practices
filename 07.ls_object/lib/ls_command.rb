@@ -9,10 +9,10 @@ class LsCommand
     command_line = CommandLine.new(ARGV)
     options = command_line.options
     paths = command_line.paths
-    new.render(options, paths)
+    new.generate(options, paths)
   end
 
-  def render(options, paths)
+  def generate(options, paths)
     directories = paths.map { |path| Directory.new(path) }
     formatter = Formatter.new(options[:all], options[:reverse], options[:long])
 
