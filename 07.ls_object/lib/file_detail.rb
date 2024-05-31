@@ -43,6 +43,7 @@ class FileDetail
   def initialize(name, path)
     @path = File.absolute_path(name, path)
     @name = name
+    @file_stat = File::Stat.new(@path)
   end
 
   def type_and_permission
@@ -50,23 +51,23 @@ class FileDetail
   end
 
   def nlink
-    file_stat.nlink
+    @file_stat.nlink
   end
 
   def uid
-    Etc.getpwuid(file_stat.uid).name
+    Etc.getpwuid(@file_stat.uid).name
   end
 
   def gid
-    Etc.getgrgid(file_stat.gid).name
+    Etc.getgrgid(@file_stat.gid).name
   end
 
   def size
-    file_stat.size
+    @file_stat.size
   end
 
   def mtime
-    file_stat.mtime
+    @file_stat.mtime
   end
 
   def block_size
@@ -86,12 +87,8 @@ class FileDetail
     authority? ? to_authority(permission) : permission
   end
 
-  def file_stat
-    File::Stat.new(@path)
-  end
-
   def file_number
-    file_stat.mode.to_s(8).rjust(6, '0')
+    @file_stat.mode.to_s(8).rjust(6, '0')
   end
 
   def authority_number
