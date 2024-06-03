@@ -11,7 +11,7 @@ class LsCommandTest < Test::Unit::TestCase
 
   def test_ls_when_single_path
     paths = ['./test/sample_dir']
-    result = @ls_command.generate(@options, paths)
+    result = @ls_command.rearrange_paths_for_display(@options, paths)
     expected = <<~TEXT
       Ellen.txt       bob.txt         gim
       Frank.txt       carol.rb        
@@ -23,7 +23,7 @@ class LsCommandTest < Test::Unit::TestCase
 
   def test_ls_when_multiple_paths
     paths = ['./test/sample_dir', './test/sample_dir/alice']
-    result = @ls_command.generate(@options, paths)
+    result = @ls_command.rearrange_paths_for_display(@options, paths)
     expected = <<~TEXT
       ./test/sample_dir:
       Ellen.txt       bob.txt         gim
@@ -40,7 +40,7 @@ class LsCommandTest < Test::Unit::TestCase
   def test_ls_when_single_path_and_option_all
     @options = { all: true }
     paths = ['./test/sample_dir']
-    result = @ls_command.generate(@options, paths)
+    result = @ls_command.rearrange_paths_for_display(@options, paths)
     expected = <<~TEXT
       .                       .alice_hidden           alice
       ..                      .bob_hidden.txt         bob.txt
@@ -55,7 +55,7 @@ class LsCommandTest < Test::Unit::TestCase
   def test_ls_when_single_path_and_option_reverse
     @options = { reverse: true }
     paths = ['./test/sample_dir']
-    result = @ls_command.generate(@options, paths)
+    result = @ls_command.rearrange_paths_for_display(@options, paths)
     expected = <<~TEXT
       gim             bob.txt         Ellen.txt
       dave.js         alice           
@@ -68,7 +68,7 @@ class LsCommandTest < Test::Unit::TestCase
   def test_ls_when_single_path_and_option_long
     @options = { long: true }
     paths = ['./test/sample_dir']
-    result = @ls_command.generate(@options, paths)
+    result = @ls_command.rearrange_paths_for_display(@options, paths)
     expected = <<~TEXT
     total 0
     -rw-r--r--  1 ryo  staff   0  5  7 18:09 Ellen.txt
@@ -86,7 +86,7 @@ class LsCommandTest < Test::Unit::TestCase
   def test_ls_when_multiple_paths_and_option_all_long
     @options = { all: true, long: true }
     paths = ['./test/sample_dir', './test/sample_dir/alice']
-    result = @ls_command.generate(@options, paths)
+    result = @ls_command.rearrange_paths_for_display(@options, paths)
     expected = <<~TEXT
       ./test/sample_dir:
       total 0
@@ -119,7 +119,7 @@ class LsCommandTest < Test::Unit::TestCase
   def test_ls_when_single_path_and_option_all_long_reverse
     @options = { all: true, reverse: true, long: true }
     paths = ['./test/sample_dir']
-    result = @ls_command.generate(@options, paths)
+    result = @ls_command.rearrange_paths_for_display(@options, paths)
     expected = <<~TEXT
       total 0
       drwxr-xr-t   2 ryo  staff   64  5  7 18:20 gim
