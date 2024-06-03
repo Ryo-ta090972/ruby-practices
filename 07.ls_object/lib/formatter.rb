@@ -53,11 +53,7 @@ class Formatter
   end
 
   def cal_width(max_size)
-    if (max_size % SPACE).zero?
-      (max_size.to_f / SPACE + 1).ceil * SPACE
-    else
-      (max_size.to_f / SPACE).ceil * SPACE
-    end
+    (max_size / SPACE + 1) * SPACE
   end
 
   def transpose_file_names(file_names, row)
