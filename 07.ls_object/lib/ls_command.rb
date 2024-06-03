@@ -9,7 +9,7 @@ class LsCommand
     command_line = CommandLine.new(ARGV)
     options = command_line.options
     paths = command_line.paths
-    new.generate(options, paths)
+    print new.generate(options, paths)
   end
 
   def generate(options, paths)
