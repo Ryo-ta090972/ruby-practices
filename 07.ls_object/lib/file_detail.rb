@@ -83,7 +83,7 @@ class FileDetail
 
   def permission
     permission_number = file_number[3, 3]
-    permission = permission_number.gsub(/./, PERMISSION)
+    permission = permission_number.chars.map { PERMISSION[_1] }.join
     authority? ? to_authority(permission) : permission
   end
 
