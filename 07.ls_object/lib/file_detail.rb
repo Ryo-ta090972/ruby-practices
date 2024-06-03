@@ -71,7 +71,7 @@ class FileDetail
   end
 
   def block_size
-    directory? ? 0 : (size.to_f / BLOCK_SIZE).ceil * BLOCK
+    @file_stat.directory? ? 0 : (size.to_f / BLOCK_SIZE).ceil * BLOCK
   end
 
   private
@@ -104,9 +104,5 @@ class FileDetail
     index = AUTHORITY_INDEX[authority_number]
     authority_permission[index] = AUTHORITY_TYPE[authority_number][authority_permission[index]]
     authority_permission
-  end
-
-  def directory?
-    type == 'd'
   end
 end
