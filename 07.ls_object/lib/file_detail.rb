@@ -77,22 +77,22 @@ class FileDetail
   private
 
   def type
-    type_number = file_number[0, 2]
+    type_number = file_mode_octet_number[0, 2]
     FILE_TYPE[type_number]
   end
 
   def permission
-    permission_number = file_number[3, 3]
+    permission_number = file_mode_octet_number[3, 3]
     permission = permission_number.chars.map { PERMISSION[_1] }.join
     authority? ? to_authority(permission) : permission
   end
 
-  def file_number
-    @file_stat.mode.to_s(8).rjust(6, '0')
+  def file_mode_octet_number
+    @file_mode_octet_number ||= @file_stat.mode.to_s(8).rjust(6, '0')
   end
 
   def authority_number
-    file_number[2, 1]
+    file_mode_octet_number[2, 1]
   end
 
   def authority?
